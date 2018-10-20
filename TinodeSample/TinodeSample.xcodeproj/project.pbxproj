@@ -16,6 +16,9 @@
 		7D8D6BA5216F8018002525F0 /* Tinode.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7D8D6BA3216F8018002525F0 /* Tinode.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7D8D6BAB216F818C002525F0 /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D8D6BAA216F818C002525F0 /* Starscream.framework */; };
 		7D8D6BAC216F818C002525F0 /* Starscream.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7D8D6BAA216F818C002525F0 /* Starscream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7DC3728221787FC8006AB6B3 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC3728121787FC8006AB6B3 /* RegisterViewController.swift */; };
+		7DC3728421788F69006AB6B3 /* UIViewController+Tinode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC3728321788F69006AB6B3 /* UIViewController+Tinode.swift */; };
+		7DC372862179DD35006AB6B3 /* ValidateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC372852179DD35006AB6B3 /* ValidateViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -43,6 +46,9 @@
 		7D8D6B9C216F7FC1002525F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D8D6BA3216F8018002525F0 /* Tinode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Tinode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D8D6BAA216F818C002525F0 /* Starscream.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Starscream.framework; path = Carthage/Build/iOS/Starscream.framework; sourceTree = "<group>"; };
+		7DC3728121787FC8006AB6B3 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		7DC3728321788F69006AB6B3 /* UIViewController+Tinode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Tinode.swift"; sourceTree = "<group>"; };
+		7DC372852179DD35006AB6B3 /* ValidateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidateViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +86,9 @@
 			isa = PBXGroup;
 			children = (
 				7D8D6B90216F7FC0002525F0 /* AppDelegate.swift */,
+				7DC3728121787FC8006AB6B3 /* RegisterViewController.swift */,
+				7DC3728321788F69006AB6B3 /* UIViewController+Tinode.swift */,
+				7DC372852179DD35006AB6B3 /* ValidateViewController.swift */,
 				7D8D6B92216F7FC0002525F0 /* ViewController.swift */,
 				7D8D6BA2216F7FE8002525F0 /* Supporting Files */,
 			);
@@ -169,8 +178,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DC3728221787FC8006AB6B3 /* RegisterViewController.swift in Sources */,
 				7D8D6B93216F7FC0002525F0 /* ViewController.swift in Sources */,
 				7D8D6B91216F7FC0002525F0 /* AppDelegate.swift in Sources */,
+				7DC372862179DD35006AB6B3 /* ValidateViewController.swift in Sources */,
+				7DC3728421788F69006AB6B3 /* UIViewController+Tinode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

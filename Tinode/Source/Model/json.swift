@@ -8,14 +8,14 @@
 
 import Foundation
 
-enum JSON: Decodable {
+public enum JSON: Decodable {
     case bool(Bool)
     case double(Double)
     case string(String)
     indirect case array([JSON])
     indirect case dictionary([String: JSON])
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         if let container = try? decoder.container(keyedBy: JSONCodingKeys.self) {
             self = JSON(from: container)
         } else if let container = try? decoder.unkeyedContainer() {
@@ -62,6 +62,51 @@ enum JSON: Decodable {
         }
         self = .array(arr)
     }
+    
+    public func getStringValue(key: String) -> String?{
+        switch self {
+        case .dictionary(let dict):
+            switch dict[key] {
+            case .string(let val)?:
+                
+                return val
+            default:
+                break;
+            }
+            break
+        default:
+            break;
+        }
+        return nil
+    }
+    
+    public func getArrayStringValue(key: String) -> [String] {
+        var arr: [String] = [String]()
+        switch self {
+        case .dictionary(let dict):
+            switch dict[key] {
+            case .array(let values)?:
+                for value in values {
+                    switch value {
+                    case .string(let v):
+                        arr.append(v)
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+            break
+        default:
+            break;
+        }
+        return arr
+    }
+    
+    
 }
 
 struct JSONCodingKeys: CodingKey {

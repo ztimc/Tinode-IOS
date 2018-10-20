@@ -7,15 +7,17 @@
 //
 
 import UIKit
+import Tinode
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
+    public var tinode: Tinode?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        initTinode()
         return true
     }
 
@@ -39,6 +41,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    func initTinode() {
+        var config = [] as TinodeConfigration
+        config = [.log(true), .apikey("AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"), .tls(false),.appName("icn"), .reconnects(false)]
+        
+        tinode = Tinode(config: config)
+        tinode?.connect(host: "47.104.30.12:6060")
+        
     }
 
 

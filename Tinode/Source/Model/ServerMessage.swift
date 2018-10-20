@@ -9,9 +9,8 @@
 import Foundation
 
 
-public struct ServerMessage : Codable{
-    var ctrl: Ctrl?
-    
+public struct ServerMessage : Decodable{
+   public var ctrl: Ctrl?
 }
 
 extension ServerMessage {
@@ -31,11 +30,4 @@ extension ServerMessage {
         try self.init(data: try Data(contentsOf: url))
     }
     
-    func jsonData() throws -> Data {
-        return try newJSONEncoder().encode(self)
-    }
-    
-    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
-        return String(data: try self.jsonData(), encoding: encoding)
-    }
 }

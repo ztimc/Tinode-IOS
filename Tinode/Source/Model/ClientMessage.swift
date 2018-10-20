@@ -8,9 +8,10 @@
 
 import Foundation
 
-struct ClientMessage : Codable{
+struct ClientMessage<Pu: Codable, Pr: Codable> : Codable{
     var hi: MsgClientHi?
     var login: MsgClientLogin?
+    var acc: MsgClientAcc<Pu,Pr>?
     
     
     init(hi: MsgClientHi) {
@@ -20,6 +21,14 @@ struct ClientMessage : Codable{
     init(login: MsgClientLogin) {
         self.login = login
     }
+    
+    init(acc: MsgClientAcc<Pu,Pr>) {
+        self.acc = acc
+    }
+}
+
+struct EmptyType : Codable {
+    
 }
 
 extension ClientMessage {

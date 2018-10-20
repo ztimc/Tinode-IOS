@@ -34,10 +34,11 @@ public class Tinode : NSObject, ConfigSettable {
     private var futures: [String: Pine<ServerMessage>]
     
     public var delegete: TinodeDelegate?
-    
+    public private(set) var userId: String?
+    public private(set) var token: String?
+    public private(set) var expires: Date?
     
     // MARK: Initializers
-    
     public init(config: TinodeConfigration) {
         self._config = config
         self.futures = [String: Pine<ServerMessage>]()
@@ -63,12 +64,13 @@ public class Tinode : NSObject, ConfigSettable {
             
             // Must send hi Message
             let clientHi = MsgClientHi.init(id: this.getMessageId(), lang: SystemUtils.getCurrentLanguage(), ua: this.makeUserAgent(), ver: Tinode.VERSION)
-            var clientMsg = ClientMessage(hi: clientHi)
+            var clientMsg = ClientMessage<EmptyType, EmptyType>(hi: clientHi)
             
-            this.sendMessage(id: clientHi.id, msg: &clientMsg).then(result: { (msg) in
+             this.sendMessage(id: clientHi.id, msg: &clientMsg).then(result: { (msg) in
                 if(msg.ctrl?.code == 201){
                     this.delegete?.TinodeDidConnect(tinode: this)
                 }
+                return nil
             })
         }
         socket?.onDisconnect = {[weak self] error in
@@ -95,12 +97,34 @@ public class Tinode : NSObject, ConfigSettable {
         return socket?.isConnect() ?? false
     }
     
+    /// login by basic
+    ///
+    /// - Parameters:
+    ///   - userName: user
+    ///   - password: password
+    /// - Returns: server message
     public func login(userName: String, password: String) -> Pine<ServerMessage>  {
         let secret = (userName + ":" + password).toBase64()
         
-        return login(type: .basic, secret: secret)
+        return login(type: .basic, secret: secret, cred: nil)
     }
     
+    public func loginByToken(token: String, cred: [Credential]) -> Pine<ServerMessage> {
+        return login(type: .token, secret: token, cred: cred)
+    }
+    
+    public func loginToken(token: String) -> Pine<ServerMessage> {
+        return login(type: .token, secret: token, cred: nil)
+    }
+    
+    public func createAccountBasic<Pu: Codable,Pr: Codable>(uname: String,
+                                                            password: String,
+                                                            login: Bool,
+                                                            tags: [String]?,
+                                                            desc: MetaSetDesc<Pu,Pr>,
+                                                            cred: [Credential]) -> Pine<ServerMessage> {
+        return account(uid: nil, type: .basic, secret: (uname + ":" + password).toBase64(), loginNow: login, tags: tags, desc: desc, cred: cred)
+    }
     
     public func setConfigs(_ config: TinodeConfigration) {
         for option in config {
@@ -117,16 +141,47 @@ public class Tinode : NSObject, ConfigSettable {
         }
     }
     
-    private func login(type: AuthType, secret: String) -> Pine<ServerMessage> {
-        let msgLogin = MsgClientLogin.init(id: getMessageId(), scheme: type.rawValue, secret: secret)
+    private func login(type: AuthType, secret: String, cred: [Credential]?) -> Pine<ServerMessage> {
         
-        var msg = ClientMessage(login: msgLogin)
+        var msgLogin = MsgClientLogin.init(id: getMessageId(), scheme: type.rawValue, secret: secret)
+        
+        if let cd = cred {
+            for c in cd {
+                msgLogin.addCred(cred: c)
+            }
+        }
+        
+        var msg = ClientMessage<EmptyType, EmptyType>(login: msgLogin)
         
         return sendMessage(id: msg.login!.id, msg: &msg)
     }
     
-    private func account(uid: String, type: AuthType, secret: String, loginNow: Bool, tags: [String]) {
+    private func account<Pu: Codable,Pr: Codable> (uid: String?,
+                                                    type: AuthType,
+                                                    secret: String,
+                                                    loginNow: Bool,
+                                                    tags: [String]?,
+                                                    desc: MetaSetDesc<Pu,Pr>,
+                                                    cred: [Credential]?) -> Pine<ServerMessage>  {
+        var msgAcc = MsgClientAcc(id: getMessageId(), uid: uid, scheme: type.rawValue, secret: secret, doLogin: loginNow, desc: desc)
         
+        if let ts = tags {
+            for tag in ts {
+                msgAcc.addTag(tag: tag)
+            }
+        }
+        
+        if let creds = cred {
+            for cd in creds {
+                msgAcc.addCred(cred: cd)
+            }
+        }
+        
+        var msg = ClientMessage<Pu,Pr>(acc: msgAcc)
+        return sendMessage(id: msgAcc.id!, msg: &msg).then(result: { (result) -> Pine<ServerMessage>? in
+            self.saveLoginInfo(msg: result.ctrl!)
+            return Pine<ServerMessage>(result: result)
+        })
     }
     
     private func dispatchMessage(msg: ServerMessage) {
@@ -137,14 +192,14 @@ public class Tinode : NSObject, ConfigSettable {
             if code >= 200 && code < 400 {
                 pine?.resolve(result: msg)
             }else {
-                pine?.reject(error: TOError(err: msg.ctrl?.text, code: msg.ctrl?.code, reson: msg.ctrl?.params?["what"] as? String))
+                pine?.reject(error: TOError(err: msg.ctrl?.text, code: msg.ctrl?.code, reson: msg.ctrl?.params?.getStringValue(key: "what")))
             }
             futures.removeValue(forKey: id)
         }
         
     }
     
-    private func sendMessage(id: String, msg: inout ClientMessage) -> Pine<ServerMessage> {
+    private func sendMessage<Pu: Codable, Pr: Codable>(id: String, msg: inout ClientMessage<Pu, Pr>) -> Pine<ServerMessage> {
         
         let pine = Pine<ServerMessage>()
         futures[id] = pine
@@ -162,6 +217,14 @@ public class Tinode : NSObject, ConfigSettable {
         msgId += 1
         lock.unlock()
         return String(msgId)
+    }
+    
+    private func saveLoginInfo(msg: Ctrl) {
+        userId = msg.params?.getStringValue(key: "user")
+        token = msg.params?.getStringValue(key: "token")
+        if let dateStr = msg.params?.getStringValue(key: "expires") {
+            expires = Formatter.iso8601.date(from: dateStr)
+        }
     }
     
 }

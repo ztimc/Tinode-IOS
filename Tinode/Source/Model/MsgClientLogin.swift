@@ -30,43 +30,19 @@ import Foundation
 
 struct MsgClientLogin: Codable {
     let id, scheme, secret: String
-}
-
-// MARK: Convenience initializers and mutators
-
-extension MsgClientLogin {
-    init(data: Data) throws {
-        self = try newJSONDecoder().decode(MsgClientLogin.self, from: data)
+    var cred: [Credential]?
+    
+    init(id: String, scheme: String, secret: String) {
+        self.id = id
+        self.scheme = scheme
+        self.secret = secret
     }
     
-    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else {
-            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+    mutating public func addCred(cred: Credential) {
+        if self.cred == nil {
+            self.cred = [Credential]()
         }
-        try self.init(data: data)
-    }
-    
-    init(fromURL url: URL) throws {
-        try self.init(data: try Data(contentsOf: url))
-    }
-    
-    func with(
-        id: String? = nil,
-        scheme: String? = nil,
-        secret: String? = nil
-        ) -> MsgClientLogin {
-        return MsgClientLogin(
-            id: id ?? self.id,
-            scheme: scheme ?? self.scheme,
-            secret: secret ?? self.secret
-        )
-    }
-    
-    func jsonData() throws -> Data {
-        return try newJSONEncoder().encode(self)
-    }
-    
-    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
-        return String(data: try self.jsonData(), encoding: encoding)
+        self.cred?.append(cred)
     }
 }
+

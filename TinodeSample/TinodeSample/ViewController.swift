@@ -9,37 +9,33 @@
 import UIKit
 import Tinode
 
-class ViewController: UIViewController , TinodeDelegate {
+class ViewController: UIViewController {
+    
+    @IBOutlet weak var userNameText: UITextField!
+    @IBOutlet weak var passwordText: UITextField!
     
     var tinode: Tinode?
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        initTinode()
+       
+        tinode = getTinode()
     }
     
-    func initTinode() {
-        var config = [] as TinodeConfigration
-        config = [.log(true), .apikey("AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"), .tls(false),.appName("icn"), .reconnects(false)]
-        
-        tinode = Tinode(config: config)
-        tinode?.connect(host: "47.104.30.12:6060")
-        
-        tinode?.delegete = self
-    }
-    
-    func TinodeDidConnect(tinode: Tinode) {
-        tinode.login(userName: "bob", password: "123").then(result: { msg in
-            print("登陆成功")
-        }) { error in
-            print(error.err ?? "登陆失败")
+
+
+    @IBAction func onLoginClick(_ sender: UIButton) {
+        if let user = userNameText.text, let pwd = passwordText.text {
+             tinode?.login(userName: user, password: pwd)
+                .then(result: { msg in
+                
+                return nil
+            }) { error in
+                print(error.err ?? "登陆失败")
+                return nil
+                }
         }
     }
     
-    func TinodeDidDisconnect(tinode: Tinode, error: Error?) {
-        
-    }
-
 }
 

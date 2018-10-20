@@ -10,7 +10,7 @@
 		7D4EC5F12171E69B00A57BD2 /* MsgClientLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5F02171E69B00A57BD2 /* MsgClientLogin.swift */; };
 		7D4EC5F32171EE8200A57BD2 /* AuthScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5F22171EE8200A57BD2 /* AuthScheme.swift */; };
 		7D4EC5F62171F44600A57BD2 /* String+Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5F52171F44600A57BD2 /* String+Base64.swift */; };
-		7D4EC5FA2173136200A57BD2 /* Mine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5F92173136200A57BD2 /* Mine.swift */; };
+		7D4EC5FA2173136200A57BD2 /* Pine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5F92173136200A57BD2 /* Pine.swift */; };
 		7D4EC5FD2173392E00A57BD2 /* TOError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5FC2173392E00A57BD2 /* TOError.swift */; };
 		7D4EC5FF2173644200A57BD2 /* Credential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5FE2173644200A57BD2 /* Credential.swift */; };
 		7D7756F92170565400D68F75 /* ClientMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7756F82170565400D68F75 /* ClientMessage.swift */; };
@@ -27,13 +27,19 @@
 		7D8D6B43216F3AD8002525F0 /* Tinode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8D6B42216F3AD8002525F0 /* Tinode.swift */; };
 		7D8D6B46216F4914002525F0 /* TinodeOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8D6B45216F4914002525F0 /* TinodeOption.swift */; };
 		7D8D6B48216F54DC002525F0 /* TinodeConfigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8D6B47216F54DC002525F0 /* TinodeConfigration.swift */; };
+		7DBE06BB217737AA00933801 /* MsgClientAcc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DBE06BA217737AA00933801 /* MsgClientAcc.swift */; };
+		7DBE06BD217742B100933801 /* MetaSetDesc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DBE06BC217742B100933801 /* MetaSetDesc.swift */; };
+		7DBE06BF217742F700933801 /* Defacs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DBE06BE217742F700933801 /* Defacs.swift */; };
+		7DBE06C1217828FF00933801 /* AcsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DBE06C0217828FF00933801 /* AcsHelper.swift */; };
+		7DBE06C321783A3100933801 /* Vcard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DBE06C221783A3100933801 /* Vcard.swift */; };
+		7DC37288217AE267006AB6B3 /* Formatter+ISO8601.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC37287217AE267006AB6B3 /* Formatter+ISO8601.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		7D4EC5F02171E69B00A57BD2 /* MsgClientLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgClientLogin.swift; sourceTree = "<group>"; };
 		7D4EC5F22171EE8200A57BD2 /* AuthScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthScheme.swift; sourceTree = "<group>"; };
 		7D4EC5F52171F44600A57BD2 /* String+Base64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Base64.swift"; path = "../../../Tinode/Source/Extension/String+Base64.swift"; sourceTree = "<group>"; };
-		7D4EC5F92173136200A57BD2 /* Mine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mine.swift; sourceTree = "<group>"; };
+		7D4EC5F92173136200A57BD2 /* Pine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pine.swift; sourceTree = "<group>"; };
 		7D4EC5FC2173392E00A57BD2 /* TOError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TOError.swift; path = ../../../Tinode/Source/Error/TOError.swift; sourceTree = "<group>"; };
 		7D4EC5FE2173644200A57BD2 /* Credential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Credential.swift; path = ../../../Tinode/Source/Model/Credential.swift; sourceTree = "<group>"; };
 		7D7756F82170565400D68F75 /* ClientMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClientMessage.swift; path = ../../../Tinode/Source/Model/ClientMessage.swift; sourceTree = "<group>"; };
@@ -52,6 +58,12 @@
 		7D8D6B42216F3AD8002525F0 /* Tinode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tinode.swift; sourceTree = "<group>"; };
 		7D8D6B45216F4914002525F0 /* TinodeOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinodeOption.swift; sourceTree = "<group>"; };
 		7D8D6B47216F54DC002525F0 /* TinodeConfigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinodeConfigration.swift; sourceTree = "<group>"; };
+		7DBE06BA217737AA00933801 /* MsgClientAcc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MsgClientAcc.swift; path = ../../../Tinode/Source/Model/MsgClientAcc.swift; sourceTree = "<group>"; };
+		7DBE06BC217742B100933801 /* MetaSetDesc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetaSetDesc.swift; sourceTree = "<group>"; };
+		7DBE06BE217742F700933801 /* Defacs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defacs.swift; sourceTree = "<group>"; };
+		7DBE06C0217828FF00933801 /* AcsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcsHelper.swift; sourceTree = "<group>"; };
+		7DBE06C221783A3100933801 /* Vcard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vcard.swift; sourceTree = "<group>"; };
+		7DC37287217AE267006AB6B3 /* Formatter+ISO8601.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Formatter+ISO8601.swift"; path = "../../../Tinode/Source/Extension/Formatter+ISO8601.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				7D4EC5F52171F44600A57BD2 /* String+Base64.swift */,
+				7DC37287217AE267006AB6B3 /* Formatter+ISO8601.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -85,14 +98,19 @@
 		7D7756F72170550500D68F75 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				7D786B162171BAB700961F9E /* Ctrl.swift */,
-				7D7756F82170565400D68F75 /* ClientMessage.swift */,
-				7D7756FA217074D900D68F75 /* MsgClientHi.swift */,
-				7D786B142171B21B00961F9E /* ServerMessage.swift */,
-				7D786B182171D54C00961F9E /* json.swift */,
-				7D4EC5F02171E69B00A57BD2 /* MsgClientLogin.swift */,
 				7D4EC5F22171EE8200A57BD2 /* AuthScheme.swift */,
+				7D7756F82170565400D68F75 /* ClientMessage.swift */,
 				7D4EC5FE2173644200A57BD2 /* Credential.swift */,
+				7D786B162171BAB700961F9E /* Ctrl.swift */,
+				7D786B182171D54C00961F9E /* json.swift */,
+				7DBE06BC217742B100933801 /* MetaSetDesc.swift */,
+				7DBE06BA217737AA00933801 /* MsgClientAcc.swift */,
+				7D7756FA217074D900D68F75 /* MsgClientHi.swift */,
+				7D4EC5F02171E69B00A57BD2 /* MsgClientLogin.swift */,
+				7D786B142171B21B00961F9E /* ServerMessage.swift */,
+				7DBE06BE217742F700933801 /* Defacs.swift */,
+				7DBE06C0217828FF00933801 /* AcsHelper.swift */,
+				7DBE06C221783A3100933801 /* Vcard.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -159,7 +177,7 @@
 			children = (
 				7D8D6B39216EF309002525F0 /* SocketLogger.swift */,
 				7D786B122171A7CD00961F9E /* SystemUtils.swift */,
-				7D4EC5F92173136200A57BD2 /* Mine.swift */,
+				7D4EC5F92173136200A57BD2 /* Pine.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -262,22 +280,28 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D786B152171B21B00961F9E /* ServerMessage.swift in Sources */,
+				7DBE06C1217828FF00933801 /* AcsHelper.swift in Sources */,
 				7D4EC5FD2173392E00A57BD2 /* TOError.swift in Sources */,
 				7D8D6B46216F4914002525F0 /* TinodeOption.swift in Sources */,
+				7DBE06C321783A3100933801 /* Vcard.swift in Sources */,
 				7D7756FB217074D900D68F75 /* MsgClientHi.swift in Sources */,
 				7D4EC5F12171E69B00A57BD2 /* MsgClientLogin.swift in Sources */,
 				7D786B132171A7CD00961F9E /* SystemUtils.swift in Sources */,
 				7D8D6B48216F54DC002525F0 /* TinodeConfigration.swift in Sources */,
 				7D8D6B3E216EF422002525F0 /* SocketEngine.swift in Sources */,
 				7D4EC5F62171F44600A57BD2 /* String+Base64.swift in Sources */,
+				7DC37288217AE267006AB6B3 /* Formatter+ISO8601.swift in Sources */,
 				7D8D6B3A216EF309002525F0 /* SocketLogger.swift in Sources */,
 				7D4EC5FF2173644200A57BD2 /* Credential.swift in Sources */,
 				7D8D6B43216F3AD8002525F0 /* Tinode.swift in Sources */,
 				7D7756F92170565400D68F75 /* ClientMessage.swift in Sources */,
 				7D8D6B41216F2E83002525F0 /* TinodeSocketDelegate.swift in Sources */,
+				7DBE06BB217737AA00933801 /* MsgClientAcc.swift in Sources */,
 				7D786B172171BAB700961F9E /* Ctrl.swift in Sources */,
-				7D4EC5FA2173136200A57BD2 /* Mine.swift in Sources */,
+				7D4EC5FA2173136200A57BD2 /* Pine.swift in Sources */,
 				7D4EC5F32171EE8200A57BD2 /* AuthScheme.swift in Sources */,
+				7DBE06BF217742F700933801 /* Defacs.swift in Sources */,
+				7DBE06BD217742B100933801 /* MetaSetDesc.swift in Sources */,
 				7D786B192171D54C00961F9E /* json.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

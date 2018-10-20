@@ -13,7 +13,7 @@ public class TOError: Error {
     public var code: Int?
     public var err: String?
     
-    init(err: String?, code: Int?, reson: String?) {
+    public init(err: String?, code: Int?, reson: String?) {
         self.err  = err
         self.code = code
         self.reson = reson
