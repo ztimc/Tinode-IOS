@@ -8,6 +8,11 @@
 
 import Foundation
 
-struct Defacs {
+struct Defacs : Codable {
+    var auth: AcsHelper?
+    var anon: AcsHelper?
     
+    init(auth: String, anon: String) {
+        
+    }
 }

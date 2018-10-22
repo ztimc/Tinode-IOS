@@ -18,6 +18,8 @@ public enum TinodeOption : ClientOption {
     /// AppName from server make
     case appName(String)
     
+    case storage(Storage)
+    
     /// if Passed `true`, the websocket will use tls
     case tls(Bool)
     
@@ -47,6 +49,8 @@ public enum TinodeOption : ClientOption {
             value = log
         case let .reconnects(reconnects):
             value = reconnects
+        case let .storage(storage):
+            value = storage
         }
         
         return value
@@ -67,6 +71,8 @@ public enum TinodeOption : ClientOption {
             description = "log"
         case .reconnects:
             description = "reconnects"
+        case .storage:
+            description = "storage"
         }
         
         return description

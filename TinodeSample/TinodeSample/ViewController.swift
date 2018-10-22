@@ -26,7 +26,7 @@ class ViewController: UIViewController {
 
     @IBAction func onLoginClick(_ sender: UIButton) {
         if let user = userNameText.text, let pwd = passwordText.text {
-             tinode?.login(userName: user, password: pwd)
+            tinode?.login(userName: user, password: pwd)
                 .then(result: { msg in
                 
                 return nil

@@ -22,10 +22,29 @@ struct AcsHelper: Codable {
     init(a: Int) {
         self.a = a
     }
+    
+    func update(umode: String) {
+        
+    }
+    
+    static func update(val: Int, umode: String?) -> Int{
+        guard let mode = umode, mode.count > 0 else {
+            return val
+        }
+        
+        
+        let action = mode[mode.startIndex]
+        
+        if action == "+" || action == "-" {
+            
+        }
+        
+        return 0;
+    }
 }
 
 enum AccessMode: Int {
-    case NONE = 0x00
+    case none = 0x00
     case join = 0x01
     case read = 0x02
     case write = 0x04

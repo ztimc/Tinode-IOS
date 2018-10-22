@@ -28,6 +28,7 @@ public class Tinode : NSObject, ConfigSettable {
     private var socket:  SocketEngine?
     private var _config: TinodeConfigration
     private var appName: String?
+    private var storage: Storage?
     
     private var msgId: Int = 0
     private let lock = NSLock.init()
@@ -109,14 +110,36 @@ public class Tinode : NSObject, ConfigSettable {
         return login(type: .basic, secret: secret, cred: nil)
     }
     
+    
+    /// Login by token
+    ///
+    /// - Parameters:
+    ///   - token: toekn
+    ///   - cred: `Credential`
+    /// - Returns: server message
     public func loginByToken(token: String, cred: [Credential]) -> Pine<ServerMessage> {
         return login(type: .token, secret: token, cred: cred)
     }
     
+    /// Login by token
+    ///
+    /// - Parameter token: token
+    /// - Returns: server message
     public func loginToken(token: String) -> Pine<ServerMessage> {
         return login(type: .token, secret: token, cred: nil)
     }
     
+    
+    /// Create user
+    ///
+    /// - Parameters:
+    ///   - uname: user name
+    ///   - password: password
+    ///   - login: is login
+    ///   - tags: tags
+    ///   - desc: `MetaSetDesc`
+    ///   - cred: `Credential`
+    /// - Returns: server message
     public func createAccountBasic<Pu: Codable,Pr: Codable>(uname: String,
                                                             password: String,
                                                             login: Bool,
@@ -126,6 +149,18 @@ public class Tinode : NSObject, ConfigSettable {
         return account(uid: nil, type: .basic, secret: (uname + ":" + password).toBase64(), loginNow: login, tags: tags, desc: desc, cred: cred)
     }
     
+    public func subscribe<Pu: Codable,Pr: Codable>(topicName: String,
+                                                   set: MsgSetMeta<Pu,Pr>,
+                                                   get: MsgGetMeta) -> Pine<ServerMessage>{
+        let msgSub = MsgClientSub<Pu,Pr>(id: getMessageId(),
+                          topic: topicName,
+                          set: set,
+                          get: get)
+        var msg    = ClientMessage<Pu,Pr>(sub: msgSub)
+        
+        return sendMessage(id: msgSub.id, msg: &msg)
+    }
+    
     public func setConfigs(_ config: TinodeConfigration) {
         for option in config {
             switch option {
@@ -133,8 +168,10 @@ public class Tinode : NSObject, ConfigSettable {
                 DefaultSocketLogger.Logger.log = log
             case let .logger(logger):
                 DefaultSocketLogger.Logger = logger
-            case let .appName(name):
-                appName = name
+            case let .appName(appName):
+                self.appName = appName
+            case let .storage(storage):
+                self.storage = storage
             default:
                 continue
             }
@@ -221,7 +258,7 @@ public class Tinode : NSObject, ConfigSettable {
     
     private func saveLoginInfo(msg: Ctrl) {
         userId = msg.params?.getStringValue(key: "user")
-        token = msg.params?.getStringValue(key: "token")
+        token  = msg.params?.getStringValue(key: "token")
         if let dateStr = msg.params?.getStringValue(key: "expires") {
             expires = Formatter.iso8601.date(from: dateStr)
         }
