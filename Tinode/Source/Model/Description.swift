@@ -35,13 +35,13 @@ public struct Description<DP: Codable, DR: Codable> : Codable {
             created = desc.created
             changed += 1
         }
-        //TODO: Add time
-        if desc.updated != nil && (updated == nil){
+        
+        if desc.updated != nil && (updated == nil || (updated!.compareDate(date: desc.updated) == .orderedAscending)){
             updated = desc.updated
             changed += 1
         }
         
-        if desc.touched != nil && (touched == nil) {
+        if desc.touched != nil && (touched == nil || (touched!.compareDate(date: desc.touched) == .orderedAscending)) {
             touched = desc.touched
             changed += 1
         }

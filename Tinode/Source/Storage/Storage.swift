@@ -28,11 +28,15 @@ public protocol Storage {
     // Fetch all topics
     func topicGetAll<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(tinode: Tinode) -> [Topic<DP,DR,SP,SR>]
     // Add new topic
+    @discardableResult
     func topicAdd<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) -> Int64
     
     /** Incoming change to topic description: the already mutated topic in memory is synchronized to DB */
+    @discardableResult
     func topicUpdate<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) -> Bool
+    
     /** Delete topic */
+    @discardableResult
     func topicDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) -> Bool
     
     /** Get seq IDs of the stored messages as a Range */
@@ -126,6 +130,7 @@ public protocol Storage {
     /** Mark messages for deletion by seq ID list */
     func msgMarkToDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, list: [Int], markAsHard: Bool) -> Bool
     /** Delete messages */
+    @discardableResult
     func msgDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, delId: Int, fromId: Int, toId: Int) -> Bool
     /** Delete messages */
     func msgDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, delId: Int, list: [Int]) -> Bool

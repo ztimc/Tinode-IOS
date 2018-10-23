@@ -32,6 +32,7 @@ public struct Ctrl: Decodable {
     public let id: String
     public let code: Int
     public let text, ts: String
+    public var topic: String?
     public var params: JSON?
     
 }

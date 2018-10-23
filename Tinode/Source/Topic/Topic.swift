@@ -11,35 +11,195 @@ import Foundation
 public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
     
     var tinode:  Tinode
-    var name:    String?
+    var name:    String
     var storage: Storage?
+    var delegeta: TopicDelegete?
     
     var desc:        Description<DP,DR>?
     var subs:        Dictionary<String, Subscription<SP,SR>>?
-    var subsUpdated: Date?
+    var subsUpdated: String?
     var tags:        [String]?
     
     var attached: Bool = false
     var lastKeyPress: Int64 = 0
     var isOnline = false
     var lastSeen: LastSeen?
-    var maxDel: Int64 = 0
+    var maxDel: Int = 0
     
     init(tinode: Tinode, sub: Subscription<SP,SR>) {
         self.tinode   = tinode
-        self.name     = sub.topic
+        self.name     = sub.topic!
         self.isOnline = sub.online
         self.desc     = Description<DP,DR>()
+        
         self.desc?.merge(sub: sub)
     }
     
     init(tinode: Tinode, name: String, desc: Description<DP,DR>) {
         self.tinode = tinode
         self.name   = name
-        self.desc     = Description<DP,DR>()
+        self.desc   = Description<DP,DR>()
+        
         self.desc?.merge(desc: desc)
     }
     
+    init(tinode: Tinode, name: String, delegate: TopicDelegete) {
+        self.tinode   = tinode
+        self.delegeta = delegate
+        self.name     = name
+        self.desc     = Description<DP,DR>()
+    }
+    
+    convenience init(tinode: Tinode, delegate: TopicDelegete) {
+        self.init(tinode: tinode, name: Tinode.TOPIC_NEW, delegate: delegate)
+    }
+    
+    func subscribe(set: MsgSetMeta<DP,DR>, get: MsgGetMeta) -> Pine<ServerMessage>{
+        if attached || !tinode.isConnect() {
+            return Pine(err: TOError(err: "attached", code: -1, reson: "not need call"))
+        }
+        
+        var newTopic: Bool
+        let topicName = name
+        let topic: Topic<DP,DR,SP,SR>? = tinode.getTopic(name: topicName)
+        if topic == nil {
+            tinode.registerTopic(topic: self)
+            newTopic = true
+        } else {
+            newTopic = false
+        }
+        
+        return tinode.subscribe(topicName: topicName, set: set, get: get)
+            .then(result: { [weak self] (msg) -> Pine<ServerMessage>? in
+                guard let this = self else { return nil}
+                
+                if !this.attached {
+                    this.attached = true
+                    if let acsDict = msg.ctrl?.params?.getDictionary(key: "acs") {
+                        this.desc?.acs = Acs(am: acsDict)
+                        if this.isNew() {
+                            this.setUpdated(updated: msg.ctrl?.ts)
+                            this.name = (msg.ctrl?.topic)!
+                            this.tinode.changeTopicName(topic: this, oldName: topicName)
+                        }
+                        this.storage?.topicUpdate(topic: this)
+                        this.delegeta?.onSubscribe(code: (msg.ctrl?.code)!, text: (msg.ctrl?.text)!)
+                    }
+                }
+                return Pine(result: msg)
+            }, failure: { [weak self] (err) -> Pine<ServerMessage>? in
+                guard let this = self else { return nil}
+                if let code = err.code {
+                    if code >= 400 && code < 500 && newTopic {
+                        this.tinode.unregisterTopic(topicName: topicName)
+                        this.storage?.topicDelete(topic: this)
+                        this.setStorage(store: nil)
+                    }
+                }
+                return Pine(err: err)
+            })
+    }
+    
+    public func setUpdated(updated: String?) {
+        desc?.updated = updated
+    }
+    
+    public func isNew() -> Bool {
+       return name.starts(with: Tinode.TOPIC_NEW)
+    }
+    
+    public func setStorage(store: Storage?){
+        storage = store
+    }
+    
+    public func getCachedMessageRange() -> TRange? {
+        return storage?.getCachedMessageSSRange(topic: self)
+    }
+    
+    public func setMaxDel(max: Int) {
+        if max > maxDel {
+            maxDel = max
+        }
+    }
+    
+    @discardableResult
+    public func loadSubs() -> Int {
+        guard let ss = storage?.getSubscriptions(topic: self) else {
+            return 0
+        }
+        
+        for s in ss {
+            if subsUpdated == nil || subsUpdated?.compareDate(date: s.updated) == .orderedAscending{
+                subsUpdated = s.updated
+            }
+            addSubToCache(sub: s)
+        }
+        
+        return subs?.count ?? 0
+    }
+    
+    public func addSubToCache(sub: Subscription<SP,SR>) {
+        if subs == nil {
+            subs = Dictionary<String, Subscription<SP,SR>>()
+        }
+        subs![sub.user!] = sub
+    }
+    
+    public func removeSubFromCache(sub: Subscription<SP,SR>) {
+        subs?.removeValue(forKey: sub.user!)
+    }
+    
+    public func getSubscription(key: String) -> Subscription<SP,SR>? {
+        if subs == nil { loadSubs() }
+        
+        return subs![key]
+    }
+    
+    public func routeMetaDel(clear: Int?, delseq: [MsgDelRange]?) {
+        if let dels = delseq {
+            for range in dels {
+                storage?.msgDelete(topic: self, delId: clear!, fromId: range.low!, toId: range.hi == nil ? range.low! + 1 : range.hi!)
+            }
+        }
+        
+        setMaxDel(max: clear!)
+        
+        delegeta?.onData(data: nil)
+    }
+    
+    public func routePres(pres: MsgServerPres) {
+        var sub: Subscription<SP,SR>?
+        switch pres.what {
+        case What.on.rawValue,
+             What.off.rawValue:
+            sub = getSubscription(key: pres.src!)
+            sub?.online = What.on.rawValue == pres.what
+            break
+        case What.del.rawValue:
+            routeMetaDel(clear: pres.clear, delseq: pres.delseq)
+            break
+        case What.acs.rawValue:
+            sub = getSubscription(key: pres.src!)
+            if sub != nil {
+                var acs = Acs()
+                acs.update(ac: pres.dacs)
+                if acs.isModeDefined() {
+                    
+                }
+            } else {
+                
+            }
+            break
+        default:
+            break
+        }
+    }
+    
+    
+    
+    func isPersisted() -> Bool {
+        return false
+    }
 }
 
 public enum TopicType : Int {

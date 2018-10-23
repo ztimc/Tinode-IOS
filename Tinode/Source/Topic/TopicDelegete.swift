@@ -9,11 +9,11 @@
 import Foundation
 
 public protocol TopicDelegete {
-    associatedtype pr: Codable
+
     func onSubscribe(code: Int, text: String)
     func onLeave(unsub: Bool, code: Int, text: String)
     
-    func onData(data: MsgServerData)
+    func onData(data: MsgServerData?)
     func onAllMessagesReceived(count: Int)
     
     func onInfo(info: MsgServerData)

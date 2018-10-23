@@ -30,9 +30,11 @@ public class Tinode : NSObject, ConfigSettable {
     private var appName: String?
     private var storage: Storage?
     
+    
     private var msgId: Int = 0
     private let lock = NSLock.init()
     private var futures: [String: Pine<ServerMessage>]
+    private var topics: [String: AnyObject]
     
     public var delegete: TinodeDelegate?
     public private(set) var userId: String?
@@ -43,6 +45,7 @@ public class Tinode : NSObject, ConfigSettable {
     public init(config: TinodeConfigration) {
         self._config = config
         self.futures = [String: Pine<ServerMessage>]()
+        self.topics  = [String: AnyObject]()
         super.init()
         
         setConfigs(config)
@@ -159,6 +162,33 @@ public class Tinode : NSObject, ConfigSettable {
         var msg    = ClientMessage<Pu,Pr>(sub: msgSub)
         
         return sendMessage(id: msgSub.id, msg: &msg)
+    }
+    
+    public func registerTopic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(
+                                                          topic: Topic<DP,DR,SP,SR>) {
+        if topic.isPersisted() {
+            storage?.topicAdd(topic: topic)
+        }
+        topics[topic.name] = topic
+    }
+    
+    public func getTopic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(
+                                                           name: String) -> Topic<DP,DR,SP,SR>? {
+        return topics[name] as? Topic<DP,DR,SP,SR>
+    }
+    
+    
+    public func changeTopicName<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(
+                                                            topic: Topic<DP,DR,SP,SR>,
+                                                            oldName: String) {
+        if let _ = topics[oldName]{
+            topics.removeValue(forKey: oldName)
+            topics[topic.name] = topic
+        }
+    }
+    
+    public func unregisterTopic(topicName: String) {
+        topics.removeValue(forKey: topicName)
     }
     
     public func setConfigs(_ config: TinodeConfigration) {

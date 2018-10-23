@@ -20,7 +20,7 @@ public enum JSON: Decodable {
             self = JSON(from: container)
         } else if let container = try? decoder.unkeyedContainer() {
             self = JSON(from: container)
-        } else {
+    } else {
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: ""))
         }
     }
@@ -63,48 +63,7 @@ public enum JSON: Decodable {
         self = .array(arr)
     }
     
-    public func getStringValue(key: String) -> String?{
-        switch self {
-        case .dictionary(let dict):
-            switch dict[key] {
-            case .string(let val)?:
-                
-                return val
-            default:
-                break;
-            }
-            break
-        default:
-            break;
-        }
-        return nil
-    }
     
-    public func getArrayStringValue(key: String) -> [String] {
-        var arr: [String] = [String]()
-        switch self {
-        case .dictionary(let dict):
-            switch dict[key] {
-            case .array(let values)?:
-                for value in values {
-                    switch value {
-                    case .string(let v):
-                        arr.append(v)
-                        break;
-                    default:
-                        break;
-                    }
-                }
-                break;
-            default:
-                break;
-            }
-            break
-        default:
-            break;
-        }
-        return arr
-    }
     
     
 }

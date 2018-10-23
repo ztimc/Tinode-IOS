@@ -41,6 +41,11 @@
 		7D7B6C1D217E1DDD00554A86 /* MsgDelRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7B6C1C217E1DDD00554A86 /* MsgDelRange.swift */; };
 		7D7B6C1F217E1F8400554A86 /* MsgServerPres.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7B6C1E217E1F8400554A86 /* MsgServerPres.swift */; };
 		7D7B6C21217E215B00554A86 /* AccessChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7B6C20217E215B00554A86 /* AccessChange.swift */; };
+		7D7B6C23217ED20B00554A86 /* JSON+Get.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7B6C22217ED20B00554A86 /* JSON+Get.swift */; };
+		7D7B6C25217F024600554A86 /* MeTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7B6C24217F024600554A86 /* MeTopic.swift */; };
+		7D7B6C27217F033700554A86 /* PrivateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7B6C26217F033700554A86 /* PrivateType.swift */; };
+		7D7B6C29217F142C00554A86 /* String+Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7B6C28217F142C00554A86 /* String+Date.swift */; };
+		7D7B6C2B217F51F600554A86 /* MetaGetBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7B6C2A217F51F600554A86 /* MetaGetBuilder.swift */; };
 		7D889F76216EEBCB0082F158 /* tinode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D889F74216EEBCB0082F158 /* tinode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7D8D6B38216EF234002525F0 /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D8D6B37216EF234002525F0 /* Starscream.framework */; };
 		7D8D6B3A216EF309002525F0 /* SocketLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8D6B39216EF309002525F0 /* SocketLogger.swift */; };
@@ -92,6 +97,11 @@
 		7D7B6C1C217E1DDD00554A86 /* MsgDelRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgDelRange.swift; sourceTree = "<group>"; };
 		7D7B6C1E217E1F8400554A86 /* MsgServerPres.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgServerPres.swift; sourceTree = "<group>"; };
 		7D7B6C20217E215B00554A86 /* AccessChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessChange.swift; sourceTree = "<group>"; };
+		7D7B6C22217ED20B00554A86 /* JSON+Get.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "JSON+Get.swift"; path = "../../../Tinode/Source/Extension/JSON+Get.swift"; sourceTree = "<group>"; };
+		7D7B6C24217F024600554A86 /* MeTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeTopic.swift; path = ../../../Tinode/Source/Topic/MeTopic.swift; sourceTree = "<group>"; };
+		7D7B6C26217F033700554A86 /* PrivateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PrivateType.swift; path = ../../../Tinode/Source/Model/PrivateType.swift; sourceTree = "<group>"; };
+		7D7B6C28217F142C00554A86 /* String+Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Date.swift"; path = "../../../Tinode/Source/Extension/String+Date.swift"; sourceTree = "<group>"; };
+		7D7B6C2A217F51F600554A86 /* MetaGetBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MetaGetBuilder.swift; path = ../../../Tinode/Source/Topic/MetaGetBuilder.swift; sourceTree = "<group>"; };
 		7D889F71216EEBCB0082F158 /* Tinode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Tinode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D889F74216EEBCB0082F158 /* tinode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinode.h; sourceTree = "<group>"; };
 		7D889F75216EEBCB0082F158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -127,6 +137,8 @@
 			children = (
 				7D4EC5F52171F44600A57BD2 /* String+Base64.swift */,
 				7DC37287217AE267006AB6B3 /* Formatter+ISO8601.swift */,
+				7D7B6C22217ED20B00554A86 /* JSON+Get.swift */,
+				7D7B6C28217F142C00554A86 /* String+Date.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -174,6 +186,7 @@
 				7D7B6C1C217E1DDD00554A86 /* MsgDelRange.swift */,
 				7D7B6C1E217E1F8400554A86 /* MsgServerPres.swift */,
 				7D7B6C20217E215B00554A86 /* AccessChange.swift */,
+				7D7B6C26217F033700554A86 /* PrivateType.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -191,6 +204,8 @@
 			children = (
 				7D7B6C06217DB78800554A86 /* Topic.swift */,
 				7D7B6C14217DE5B300554A86 /* TopicDelegete.swift */,
+				7D7B6C24217F024600554A86 /* MeTopic.swift */,
+				7D7B6C2A217F51F600554A86 /* MetaGetBuilder.swift */,
 			);
 			path = Topic;
 			sourceTree = "<group>";
@@ -363,6 +378,7 @@
 			files = (
 				7D7B6C09217DBA1000554A86 /* Subscription.swift in Sources */,
 				7D786B152171B21B00961F9E /* ServerMessage.swift in Sources */,
+				7D7B6C23217ED20B00554A86 /* JSON+Get.swift in Sources */,
 				7D7B6BFF217DAF6400554A86 /* MetaGetData.swift in Sources */,
 				7D7B6C11217DD2B200554A86 /* Acs.swift in Sources */,
 				7DBE06C1217828FF00933801 /* AcsHelper.swift in Sources */,
@@ -370,6 +386,7 @@
 				7D7B6C0D217DBD4200554A86 /* Drafty.swift in Sources */,
 				7D8D6B46216F4914002525F0 /* TinodeOption.swift in Sources */,
 				7DBE06C321783A3100933801 /* Vcard.swift in Sources */,
+				7D7B6C29217F142C00554A86 /* String+Date.swift in Sources */,
 				7D7B6C21217E215B00554A86 /* AccessChange.swift in Sources */,
 				7D7B6C1D217E1DDD00554A86 /* MsgDelRange.swift in Sources */,
 				7D7756FB217074D900D68F75 /* MsgClientHi.swift in Sources */,
@@ -397,10 +414,13 @@
 				7D7B6C15217DE5B300554A86 /* TopicDelegete.swift in Sources */,
 				7DBE06BB217737AA00933801 /* MsgClientAcc.swift in Sources */,
 				7D786B172171BAB700961F9E /* Ctrl.swift in Sources */,
+				7D7B6C27217F033700554A86 /* PrivateType.swift in Sources */,
 				7D7B6BF7217DAAD100554A86 /* MetaSetSub.swift in Sources */,
 				7D4EC5FA2173136200A57BD2 /* Pine.swift in Sources */,
 				7D7B6BFD217DAECD00554A86 /* MetaGetSub.swift in Sources */,
 				7D7B6BF9217DAC3E00554A86 /* MsgGetMeta.swift in Sources */,
+				7D7B6C2B217F51F600554A86 /* MetaGetBuilder.swift in Sources */,
+				7D7B6C25217F024600554A86 /* MeTopic.swift in Sources */,
 				7D4EC5F32171EE8200A57BD2 /* AuthScheme.swift in Sources */,
 				7DBE06BF217742F700933801 /* Defacs.swift in Sources */,
 				7D7B6C04217DB5A100554A86 /* Storage.swift in Sources */,
