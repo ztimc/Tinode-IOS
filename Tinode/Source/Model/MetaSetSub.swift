@@ -9,10 +9,10 @@
 import Foundation
 
 public struct MetaSetSub : Codable {
-    var user: String
-    var mode: String
+    var user: String?
+var mode: String?
     
-    public init(user: String, mode: String) {
+    public init(user: String?, mode: String?) {
         self.user = user
         self.mode = mode
     }

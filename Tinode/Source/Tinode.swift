@@ -155,11 +155,11 @@ public class Tinode : NSObject, ConfigSettable {
     public func subscribe<Pu: Codable,Pr: Codable>(topicName: String,
                                                    set: MsgSetMeta<Pu,Pr>,
                                                    get: MsgGetMeta) -> Pine<ServerMessage>{
-        let msgSub = MsgClientSub<Pu,Pr>(id: getMessageId(),
-                          topic: topicName,
-                          set: set,
-                          get: get)
-        var msg    = ClientMessage<Pu,Pr>(sub: msgSub)
+        let msgSub: MsgClientSub<Pu,Pr> = MsgClientSub<Pu,Pr>(id: getMessageId(),
+                                                            topic: topicName,
+                                                            set: set,
+                                                            get: get)
+        var msg: ClientMessage<Pu,Pr>   = ClientMessage<Pu,Pr>.init(sub: msgSub)
         
         return sendMessage(id: msgSub.id, msg: &msg)
     }
@@ -189,6 +189,13 @@ public class Tinode : NSObject, ConfigSettable {
     
     public func unregisterTopic(topicName: String) {
         topics.removeValue(forKey: topicName)
+    }
+    
+    public func getMeta(topicName: String, query: MsgGetMeta) -> Pine<ServerMessage> {
+        let msgGet = MsgClientGet.init(id: getMessageId(), topic: topicName, query: query)
+        var msg: ClientMessage<EmptyType,EmptyType> = ClientMessage.init(get: msgGet)
+        
+        return sendMessage(id: msg.get!.id, msg: &msg)
     }
     
     public func setConfigs(_ config: TinodeConfigration) {
@@ -230,7 +237,7 @@ public class Tinode : NSObject, ConfigSettable {
                                                     tags: [String]?,
                                                     desc: MetaSetDesc<Pu,Pr>,
                                                     cred: [Credential]?) -> Pine<ServerMessage>  {
-        var msgAcc = MsgClientAcc(id: getMessageId(), uid: uid, scheme: type.rawValue, secret: secret, doLogin: loginNow, desc: desc)
+        var msgAcc: MsgClientAcc<Pu,Pr> = MsgClientAcc<Pu,Pr>(id: getMessageId(), uid: uid, scheme: type.rawValue, secret: secret, doLogin: loginNow, desc: desc)
         
         if let ts = tags {
             for tag in ts {
@@ -244,7 +251,7 @@ public class Tinode : NSObject, ConfigSettable {
             }
         }
         
-        var msg = ClientMessage<Pu,Pr>(acc: msgAcc)
+        var msg = ClientMessage<Pu,Pr>.init(acc: msgAcc)
         return sendMessage(id: msgAcc.id!, msg: &msg).then(result: { (result) -> Pine<ServerMessage>? in
             self.saveLoginInfo(msg: result.ctrl!)
             return Pine<ServerMessage>(result: result)

@@ -17,7 +17,7 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
     
     var desc:        Description<DP,DR>?
     var subs:        Dictionary<String, Subscription<SP,SR>>?
-    var subsUpdated: String?
+    public var subsUpdated: String?
     var tags:        [String]?
     
     var attached: Bool = false
@@ -104,6 +104,12 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         desc?.updated = updated
     }
     
+    public func getUpdated() -> String? {
+        return desc?.updated
+    }
+    
+    
+    
     public func isNew() -> Bool {
        return name.starts(with: Tinode.TOPIC_NEW)
     }
@@ -155,6 +161,17 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         return subs![key]
     }
     
+    public func getMeta(query: MsgGetMeta) -> Pine<ServerMessage> {
+        return tinode.getMeta(topicName: name, query: query)
+    }
+    
+    public func updateAccessMode(ac: AccessChange) ->Bool {
+        if desc?.acs == nil {
+            desc?.acs = Acs()
+        }
+        return desc?.acs?.update(ac: ac) ?? false
+    }
+    
     public func routeMetaDel(clear: Int?, delseq: [MsgDelRange]?) {
         if let dels = delseq {
             for range in dels {
@@ -165,6 +182,10 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         setMaxDel(max: clear!)
         
         delegeta?.onData(data: nil)
+    }
+    
+    public func getMetaGetBuilder() -> MetaGetBuilder<DP,DR,SP,SR> {
+        return MetaGetBuilder.init(topic: self)
     }
     
     public func routePres(pres: MsgServerPres) {
@@ -184,9 +205,17 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
                 var acs = Acs()
                 acs.update(ac: pres.dacs)
                 if acs.isModeDefined() {
-                    
+                     getMeta(query: getMetaGetBuilder().withGetSub(user: pres.src!).build()).then()
                 }
             } else {
+                sub?.updateAccessMode(ac: pres.dacs!)
+                
+                if sub?.user == tinode.userId {
+                    if updateAccessMode(ac: pres.dacs!) {
+                        storage?.topicUpdate(topic: self)
+                    }
+                }
+                
                 
             }
             break

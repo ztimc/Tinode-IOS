@@ -13,6 +13,7 @@ struct ClientMessage<Pu: Codable, Pr: Codable> : Codable{
     var login: MsgClientLogin?
     var acc: MsgClientAcc<Pu,Pr>?
     var sub: MsgClientSub<Pu,Pr>?
+    var get: MsgClientGet?
     
     
     init(hi: MsgClientHi) {
@@ -29,6 +30,10 @@ struct ClientMessage<Pu: Codable, Pr: Codable> : Codable{
     
     init(sub: MsgClientSub<Pu,Pr>) {
         self.sub = sub
+    }
+    
+    init(get: MsgClientGet) {
+        self.get = get
     }
 }
 

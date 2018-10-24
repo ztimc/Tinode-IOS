@@ -13,21 +13,21 @@ public struct MetaGetData : Codable {
     var before: Int?
     var limit:  Int?
     
-    init(since:  Int,
-         before: Int,
-         limit:  Int) {
+    init(since:  Int?,
+         before: Int?,
+         limit:  Int?) {
         self.since  = since
         self.before = before
         self.limit  = limit
     }
     
-    init(since:  Int,
-         limit:  Int) {
+    init(since:  Int?,
+         limit:  Int?) {
         self.since  = since
         self.limit  = limit
     }
     
-    init(limit:  Int) {
+    init(limit:  Int?) {
         self.limit  = limit
     }
     

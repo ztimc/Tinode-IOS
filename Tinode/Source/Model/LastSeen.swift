@@ -9,6 +9,18 @@
 import Foundation
 
 public struct LastSeen {
-    var when: String
-    var ua: String
+    var when: String?
+    var ua: String?
+    
+    public mutating func merge(seen: LastSeen?) -> Bool {
+        guard let sn = seen else {return false}
+        
+        if sn.when != nil && (when == nil || when?.compareDate(date: sn.when) == .orderedAscending) {
+                when = sn.when
+                ua   = sn.ua
+                return true
+        }
+        
+        return false
+    }
 }

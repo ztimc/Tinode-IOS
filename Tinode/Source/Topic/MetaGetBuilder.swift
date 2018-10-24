@@ -57,10 +57,53 @@ public class MetaGetBuilder<DP: Codable, DR: Codable, SP: Codable, SR: Codable> 
         return self
     }
     
+    public func withGetDesc() -> MetaGetBuilder<DP,DR,SP,SR> {
+        meta.setDesc(date: topic.getUpdated()!)
+        return self
+    }
     
-    public func withGetData(user: String, ims: String, limit: Int) -> MetaGetBuilder<DP,DR,SP,SR> {
+    public func withGetSub(user: String, ims: String, limit: Int) -> MetaGetBuilder<DP,DR,SP,SR> {
         meta.setSub(user: user, ims: ims, limit: limit)
         return self
+    }
+    
+    public func withGetSub(user: String, limit: Int) -> MetaGetBuilder<DP,DR,SP,SR> {
+        meta.setSub(user: user, ims: nil, limit: limit)
+        return self
+    }
+    
+    public func withGetSub(user: String) -> MetaGetBuilder<DP,DR,SP,SR> {
+        meta.setSub(user: user, ims: nil, limit: nil)
+        return self
+    }
+    
+    public func withGetSub() -> MetaGetBuilder<DP,DR,SP,SR> {
+        meta.setSub(user: nil, ims: topic.subsUpdated, limit: nil)
+        return self
+    }
+    
+    public func withGetDel(since: Int, limit: Int) -> MetaGetBuilder<DP,DR,SP,SR> {
+        meta.setDel(since: since, limit: limit)
+        return self
+    }
+    
+    public func withGetLaterDel(limit: Int) -> MetaGetBuilder<DP,DR,SP,SR> {
+        meta.setDel(since: topic.maxDel + 1, limit: limit)
+        return self
+    }
+    
+    public func withGetDel() -> MetaGetBuilder<DP,DR,SP,SR> {
+        meta.setDel(since: nil, limit: nil)
+        return self
+    }
+
+    public func withGetTags() -> MetaGetBuilder<DP,DR,SP,SR> {
+        meta.setTags()
+        return self
+    }
+    
+    public func build() -> MsgGetMeta {
+        return meta
     }
     
 }

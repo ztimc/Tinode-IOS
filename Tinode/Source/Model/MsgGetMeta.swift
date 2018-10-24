@@ -70,7 +70,7 @@ public struct MsgGetMeta : Codable {
         buildWhat()
     }
     
-    public mutating func setDel(since: Int, limit: Int) {
+    public mutating func setDel(since: Int?, limit: Int?) {
         del = MetaGetData(since: since, limit: limit)
         set |= MsgGetMeta.DEL_SET
         buildWhat()

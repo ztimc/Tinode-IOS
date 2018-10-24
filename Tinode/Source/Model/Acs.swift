@@ -16,6 +16,12 @@ public struct Acs : Codable{
     init() {
     }
     
+    init(acs: Acs) {
+        given = AcsHelper(ah: acs.given)
+        want  = AcsHelper(ah: acs.want)
+        mode  = AcsHelper(ah: acs.mode)
+    }
+    
     init(am: Dictionary<String,String>) {
         given = AcsHelper(a: am["given"]!)
         want  = AcsHelper(a: am["want"]!)

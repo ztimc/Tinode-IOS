@@ -15,8 +15,8 @@ public struct AcsHelper: Codable {
         self.a = Int(a)
     }
     
-    init(ah: AcsHelper) {
-        a = ah.a
+    init(ah: AcsHelper?) {
+        a = ah?.a
     }
     
     init(a: Int) {
