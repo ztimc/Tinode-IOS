@@ -11,6 +11,7 @@ import Foundation
 public struct Subscription<SP: Codable,SR : Codable> {
     var user:    String?
     var created: String?
+    var deleted: String?
     var updated: String?
     var touched: String?
     var topic:   String?
@@ -28,6 +29,7 @@ public struct Subscription<SP: Codable,SR : Codable> {
     var priv: SR?
     var pub:  SP?
     
+    @discardableResult
     public mutating func merge(sub: Subscription<SP,SR>) -> Bool {
         var changed = 0
         
@@ -108,6 +110,7 @@ public struct Subscription<SP: Codable,SR : Codable> {
         return changed > 0
     }
     
+    @discardableResult
     public mutating func merge(sub: MetaSetSub) -> Bool {
         var changed = 0
         

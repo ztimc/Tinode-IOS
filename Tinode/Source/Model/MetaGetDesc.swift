@@ -9,5 +9,5 @@
 import Foundation
 
 public struct MetaGetDesc : Codable {
-    var ims: String
+    var ims: String?
 }

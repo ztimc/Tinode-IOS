@@ -58,7 +58,7 @@ public class MetaGetBuilder<DP: Codable, DR: Codable, SP: Codable, SR: Codable> 
     }
     
     public func withGetDesc() -> MetaGetBuilder<DP,DR,SP,SR> {
-        meta.setDesc(date: topic.getUpdated()!)
+        meta.setDesc(date: topic.getUpdated())
         return self
     }
     

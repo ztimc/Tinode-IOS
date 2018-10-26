@@ -47,23 +47,27 @@ public protocol Storage {
     func setRecv<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>,recv: Int) -> Bool
     
     /** Add subscription in a generic topic. The subscription is received from the server. */
+    @discardableResult
     func subAdd<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, sub: Subscription<SP,SR>) -> Int64
     /** Update subscription in a generic topic */
     func subUpdate<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, sub: Subscription<SP,SR>)
     /** Add a new subscriber to topic. The new subscriber is being added locally. */
     func subNew<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>,sub: Subscription<SP,SR>) -> Int64
     /** Delete existing subscription */
+    @discardableResult
     func subDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>,sub: Subscription<SP,SR>) -> Bool
     
     /** Get a list o topic subscriptions from DB. */
     func getSubscriptions<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) -> [Subscription<SP,SR>]
     
     /** Read user description */
-    func userGet(uid: String) -> User
+    func userGet<P: Codable,R: Codable>(uid: String) -> User<P,R>
     /** Insert new user */
-    func userAdd(user: User) -> Int64
+    @discardableResult
+    func userAdd<P: Codable,R: Codable>(user: User<P,R>) -> Int64
     /** Update existing user */
-    func userUpdate(user: User) -> Bool
+    @discardableResult
+    func userUpdate<P: Codable,R: Codable>(user: User<P,R>) -> Bool
     
     /**
      * Message received from the server.

@@ -90,7 +90,7 @@ public struct Description<DP: Codable, DR: Codable> : Codable {
     }
     
     @discardableResult
-    mutating func merge<SP, SR>(sub: Subscription<SP,SR>) -> Bool {
+    public mutating func merge<SP, SR>(sub: Subscription<SP,SR>) -> Bool {
         var changed = 0
         
         if let subUpdated = Formatter.iso8601.date(from: sub.updated ?? "") {

@@ -37,7 +37,7 @@ struct ClientMessage<Pu: Codable, Pr: Codable> : Codable{
     }
 }
 
-struct EmptyType : Codable {
+public struct EmptyType : Codable {
     
 }
 

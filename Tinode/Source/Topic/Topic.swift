@@ -20,7 +20,7 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
     public var subsUpdated: String?
     var tags:        [String]?
     
-    var attached: Bool = false
+    public var attached: Bool = false
     var lastKeyPress: Int64 = 0
     var isOnline = false
     var lastSeen: LastSeen?
@@ -43,7 +43,7 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         self.desc?.merge(desc: desc)
     }
     
-    init(tinode: Tinode, name: String, delegate: TopicDelegete) {
+    init(tinode: Tinode, name: String, delegate: TopicDelegete?) {
         self.tinode   = tinode
         self.delegeta = delegate
         self.name     = name
@@ -54,7 +54,7 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         self.init(tinode: tinode, name: Tinode.TOPIC_NEW, delegate: delegate)
     }
     
-    func subscribe(set: MsgSetMeta<DP,DR>, get: MsgGetMeta) -> Pine<ServerMessage>{
+    public func subscribe(set: MsgSetMeta<DP,DR>?, get: MsgGetMeta?) -> Pine<ServerMessage>{
         if attached || !tinode.isConnect() {
             return Pine(err: TOError(err: "attached", code: -1, reson: "not need call"))
         }
@@ -172,6 +172,24 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         return desc?.acs?.update(ac: ac) ?? false
     }
     
+    public func update(desc: Description<DP,DR>) {
+        if (self.desc!.merge(desc: desc)) {
+            storage?.topicUpdate(topic: self)
+        }
+    }
+    
+    public func update(sub: Subscription<SP,SR>) {
+        if (self.desc!.merge(sub: sub)) {
+            storage?.topicUpdate(topic: self)
+        }
+        
+        isOnline = sub.online
+    }
+    
+    public func leave() {
+        // TODO: 需要填写
+    }
+    
     public func routeMetaDel(clear: Int?, delseq: [MsgDelRange]?) {
         if let dels = delseq {
             for range in dels {
@@ -182,6 +200,64 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         setMaxDel(max: clear!)
         
         delegeta?.onData(data: nil)
+    }
+    
+    public func getTopicType(name: String) -> TopicType {
+        var tp:TopicType = .any
+        
+        switch name {
+        case Tinode.TOPIC_ME:
+            tp = .me
+        case Tinode.TOPIC_FND:
+            tp = .fnd
+        case Tinode.TOPIC_GRP_PREFIX:
+            tp = .grp
+        case Tinode.TOPIC_USR_PREFIX:
+            tp = .p2p
+        default:
+            tp = .any
+        }
+        
+        return tp
+    }
+    
+    public func isMeType() -> Bool {
+       return getTopicType(name: name) == .me
+    }
+    
+    public func isP2PType() -> Bool {
+        return getTopicType(name: name) == .p2p
+    }
+    public func isFndType() -> Bool {
+        return getTopicType(name: name) == .fnd
+    }
+    public func isGrpType() -> Bool {
+        return getTopicType(name: name) == .grp
+    }
+    
+    public func processSub(newSub: Subscription<SP,SR>) {
+        var sub: Subscription<SP,SR>?
+        
+        if newSub.deleted != nil {
+            storage?.subDelete(topic: self, sub: newSub)
+            removeSubFromCache(sub: newSub)
+            sub = newSub
+        } else {
+            sub = getSubscription(key: newSub.user!)
+            if sub != nil {
+                sub!.merge(sub: newSub)
+                storage?.subUpdate(topic: self, sub: newSub )
+            } else {
+                sub = newSub
+                addSubToCache(sub: sub!)
+                storage?.subAdd(topic: self, sub: sub!)
+            }
+            
+            tinode.updateUser(sub: sub!)
+        }
+        
+        delegeta?.onMetaSub(sub: sub!)
+        
     }
     
     public func getMetaGetBuilder() -> MetaGetBuilder<DP,DR,SP,SR> {
@@ -216,14 +292,37 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
                     }
                 }
                 
+                if sub?.acs?.isModeDefined() ?? false {
+                    if isP2PType() {
+                        leave()
+                    }
+                    sub?.deleted = Formatter.iso8601.string(from: Date())
+                    
+                }
                 
             }
             break
         default:
             break
         }
+        delegeta?.onPres(pres: pres)
     }
     
+    public func routeMeta(meta: MsgServerMeta<DP,DR,SP,SR>) {
+        if meta.desc != nil {
+            routeMeta(meta: meta)
+        }
+    }
+    
+    public func routeMateDesc(meta: MsgServerMeta<DP,DR,SP,SR>) {
+        update(desc: meta.desc!)
+        
+        if getTopicType(name: name) == .p2p {
+            tinode.updateUser(uid: name, desc: meta.desc!)
+        }
+        
+        delegeta?.onMetaDesc(desc: meta.desc!)
+    }
     
     
     func isPersisted() -> Bool {

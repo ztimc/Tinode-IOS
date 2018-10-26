@@ -11,13 +11,13 @@ import Foundation
 public struct MsgClientSub<Pu:Codable, Pr:Codable> : Codable {
     var id: String
     var topic: String
-    var set: MsgSetMeta<Pu,Pr>
-    var get: MsgGetMeta
+    var set: MsgSetMeta<Pu,Pr>?
+    var get: MsgGetMeta?
     
     init(id: String,
          topic: String,
-         set: MsgSetMeta<Pu,Pr>,
-         get: MsgGetMeta) {
+         set: MsgSetMeta<Pu,Pr>?,
+         get: MsgGetMeta?) {
         self.id    = id
         self.topic = topic
         self.set   = set

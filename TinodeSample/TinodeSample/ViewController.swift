@@ -15,11 +15,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var passwordText: UITextField!
     
     var tinode: Tinode?
+    var meTopic: MeTopic<VCard>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
        
         tinode = getTinode()
+        meTopic = MeTopic(tinode: tinode!, delegate: nil)
     }
     
 
@@ -28,13 +30,30 @@ class ViewController: UIViewController {
         if let user = userNameText.text, let pwd = passwordText.text {
             tinode?.login(userName: user, password: pwd)
                 .then(result: { msg in
-                
-                return nil
+                    
+                   
+                    self.topicAttach()
+                    return nil
             }) { error in
                 print(error.err ?? "登陆失败")
                 return nil
                 }
         }
+    }
+    
+    public func topicAttach() {
+        meTopic?.subscribe(set: nil,
+                           get: meTopic?.getMetaGetBuilder()
+                                        .withGetDesc()
+                                        .withGetSub()
+                                        .build())
+            .then(result: { (msg) -> Pine<ServerMessage>? in
+                print(msg)
+                return nil
+            }, failure: { (error) -> Pine<ServerMessage>? in
+                print(error)
+                return nil
+            })
     }
     
 }

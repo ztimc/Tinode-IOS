@@ -34,7 +34,7 @@ public struct MsgGetMeta : Codable {
         self.what = MsgGetMeta.DESC + " " + MsgGetMeta.SUB + " " + MsgGetMeta.DATA + " " + MsgGetMeta.DEL + " " + MsgGetMeta.TAGS
     }
     
-    public mutating func setDesc(date: String) {
+    public mutating func setDesc(date: String?) {
         self.desc?.ims = date
         set |= MsgGetMeta.DESC_SET
         buildWhat()
@@ -103,8 +103,10 @@ public struct MsgGetMeta : Codable {
         if parts.count > 0 {
             what = ""
             what?.append(parts[0])
-            for index in 1...(parts.count-1) {
-                what?.append(parts[index])
+            if parts.count > 1 {
+                for index in 1...(parts.count-1) {
+                    what?.append(parts[index])
+                }
             }
         }
     }

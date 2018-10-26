@@ -34,7 +34,8 @@ public class Tinode : NSObject, ConfigSettable {
     private var msgId: Int = 0
     private let lock = NSLock.init()
     private var futures: [String: Pine<ServerMessage>]
-    private var topics: [String: AnyObject]
+    private var topics:  [String: AnyObject]
+    private var users:   [String: AnyObject]
     
     public var delegete: TinodeDelegate?
     public private(set) var userId: String?
@@ -46,6 +47,7 @@ public class Tinode : NSObject, ConfigSettable {
         self._config = config
         self.futures = [String: Pine<ServerMessage>]()
         self.topics  = [String: AnyObject]()
+        self.users  = [String: AnyObject]()
         super.init()
         
         setConfigs(config)
@@ -153,8 +155,8 @@ public class Tinode : NSObject, ConfigSettable {
     }
     
     public func subscribe<Pu: Codable,Pr: Codable>(topicName: String,
-                                                   set: MsgSetMeta<Pu,Pr>,
-                                                   get: MsgGetMeta) -> Pine<ServerMessage>{
+                                                   set: MsgSetMeta<Pu,Pr>?,
+                                                   get: MsgGetMeta?) -> Pine<ServerMessage>{
         let msgSub: MsgClientSub<Pu,Pr> = MsgClientSub<Pu,Pr>(id: getMessageId(),
                                                             topic: topicName,
                                                             set: set,
@@ -177,6 +179,16 @@ public class Tinode : NSObject, ConfigSettable {
         return topics[name] as? Topic<DP,DR,SP,SR>
     }
     
+    public func newTopic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(sub: Subscription<SP,SR>) -> Topic<DP,DR,SP,SR>{
+        /*
+        if Tinode.TOPIC_ME == name {
+            let topic:MeTopic<DP> = MeTopic(tinode: self, name: name, delegate: nil)
+            return topic
+        }*/
+        
+        let topic:MeTopic<DP> = MeTopic(tinode: self, delegate: nil)
+        return topic as! Topic<DP, DR, SP, SR>
+    }
     
     public func changeTopicName<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(
                                                             topic: Topic<DP,DR,SP,SR>,
@@ -196,6 +208,40 @@ public class Tinode : NSObject, ConfigSettable {
         var msg: ClientMessage<EmptyType,EmptyType> = ClientMessage.init(get: msgGet)
         
         return sendMessage(id: msg.get!.id, msg: &msg)
+    }
+    
+    public func getUser<P: Codable,R: Codable>(uid: String) -> User<P,R>? {
+        var user = users[uid] as? User<P,R>
+        if user == nil && storage != nil {
+            user = storage?.userGet(uid: uid)
+            if user != nil {
+                users[uid] = user as AnyObject
+            }
+        }
+        return user
+    }
+    
+    
+    public func updateUser<SP: Codable, SR: Codable>(sub: Subscription<SP,SR>) {
+        var user = users[sub.user!] as? User<SP,SR>
+        if user == nil {
+            user = User(sub: sub)
+            users[sub.user!] = user as AnyObject
+        } else {
+            user?.merge(sub: sub)
+        }
+        storage?.userUpdate(user: user!)
+    }
+    
+    public func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP,DR>) {
+        var user = users[uid] as? User<DP,DR>
+        if user == nil {
+            user = User(uid: uid, desc: desc)
+            users[uid] = user as AnyObject
+        } else {
+            user?.merge(desc: desc)
+        }
+        storage?.userUpdate(user: user!)
     }
     
     public func setConfigs(_ config: TinodeConfigration) {
