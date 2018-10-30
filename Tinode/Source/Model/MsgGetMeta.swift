@@ -34,13 +34,13 @@ public struct MsgGetMeta : Codable {
         self.what = MsgGetMeta.DESC + " " + MsgGetMeta.SUB + " " + MsgGetMeta.DATA + " " + MsgGetMeta.DEL + " " + MsgGetMeta.TAGS
     }
     
-    public mutating func setDesc(date: String?) {
+    public mutating func setDesc(date: Date?) {
         self.desc?.ims = date
         set |= MsgGetMeta.DESC_SET
         buildWhat()
     }
     
-    public mutating func setSub(user: String?, ims: String?, limit: Int?) {
+    public mutating func setSub(user: String?, ims: Date?, limit: Int?) {
         sub  = MetaGetSub(user: user, ims: ims, limit: limit)
         set |= MsgGetMeta.SUB_SET
         buildWhat()

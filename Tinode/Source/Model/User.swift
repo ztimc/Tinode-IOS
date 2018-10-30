@@ -8,10 +8,10 @@
 
 import Foundation
 
-public struct User<P: Codable, R: Codable>: Codable {
-    var updated: String?
+public struct User: Decodable {
+    var updated: Date?
     var uid: String?
-    var pub: P?
+    var pub: JSON?
     
     init() {}
     
@@ -19,7 +19,7 @@ public struct User<P: Codable, R: Codable>: Codable {
         self.uid = uid
     }
     
-    init(sub: Subscription<P,R>) {
+    init(sub: Subscription) {
         if sub.user != nil && sub.user?.count ?? -1 > 0{
             uid = sub.user
             updated = sub.updated
@@ -27,7 +27,7 @@ public struct User<P: Codable, R: Codable>: Codable {
         }
     }
     
-    init(uid: String, desc: Description<P,R>) {
+    init(uid: String, desc: Description) {
         self.uid = uid
         self.updated = desc.updated
         pub = desc.pub
@@ -35,7 +35,7 @@ public struct User<P: Codable, R: Codable>: Codable {
     @discardableResult
     public mutating func merge(user: User) -> Bool {
         var changed = false
-        if user.updated != nil && (updated == nil || ((updated?.compareDate(date: user.updated))) == .orderedAscending ) {
+        if user.updated != nil && (updated == nil || updated!.before(date: user.updated!)) {
             updated = user.updated
             if user.pub != nil {
                 pub = user.pub
@@ -49,9 +49,9 @@ public struct User<P: Codable, R: Codable>: Codable {
     }
     
     @discardableResult
-    public mutating func merge(sub: Subscription<P,R>) -> Bool {
+    public mutating func merge(sub: Subscription) -> Bool {
         var changed = false
-        if sub.updated != nil && (updated == nil || ((updated?.compareDate(date: sub.updated))) == .orderedAscending) {
+        if sub.updated != nil && (updated == nil || updated!.before(date: sub.updated!)) {
             updated = sub.updated
             if sub.pub != nil {
                 pub = sub.pub
@@ -66,9 +66,9 @@ public struct User<P: Codable, R: Codable>: Codable {
     
     
     @discardableResult
-    public mutating func merge(desc: Description<P,R>) -> Bool {
+    public mutating func merge(desc: Description) -> Bool {
         var changed = false
-        if desc.updated != nil && (updated == nil || ((updated?.compareDate(date: desc.updated))) == .orderedAscending) {
+        if desc.updated != nil && (updated == nil || updated!.before(date: desc.updated!)) {
             updated = desc.updated
             if desc.pub != nil {
                 pub = desc.pub

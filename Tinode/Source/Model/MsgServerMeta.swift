@@ -8,12 +8,14 @@
 
 import Foundation
 
-public struct MsgServerMeta<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
+public struct MsgServerMeta : Decodable {
     var id: String?
     var topic: String?
     var ts: String?
-    var desc: Description<DP,DR>?
-    var sub: [Subscription<SP,SR>]?
+    var desc: Description?
+    var sub: [Subscription]?
     var tags: [String]?
     var del: DelValues?
+    
+    
 }

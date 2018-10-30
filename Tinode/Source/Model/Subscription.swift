@@ -8,12 +8,11 @@
 
 import Foundation
 
-public struct Subscription<SP: Codable,SR : Codable> {
+public struct Subscription: Decodable {
     var user:    String?
-    var created: String?
-    var deleted: String?
-    var updated: String?
-    var touched: String?
+    var deleted: Date?
+    var updated: Date?
+    var touched: Date?
     var topic:   String?
     
     var seq:   Int = 0
@@ -26,11 +25,11 @@ public struct Subscription<SP: Codable,SR : Codable> {
     var acs:  Acs?
     var seen: LastSeen?
     
-    var priv: SR?
-    var pub:  SP?
+    var priv: JSON?
+    var pub:  JSON?
     
     @discardableResult
-    public mutating func merge(sub: Subscription<SP,SR>) -> Bool {
+    public mutating func merge(sub: Subscription) -> Bool {
         var changed = 0
         
         if let u = sub.user, user == nil {
@@ -38,7 +37,7 @@ public struct Subscription<SP: Codable,SR : Codable> {
             changed += 1
         }
         
-        if (sub.updated != nil) && (updated == nil || updated!.compareDate(date: sub.updated) == .orderedAscending) {
+        if (sub.updated != nil) && (updated == nil || ((updated?.before(date: sub.updated!))!)) {
             updated = sub.updated
             
             if sub.pub != nil {
@@ -50,7 +49,7 @@ public struct Subscription<SP: Codable,SR : Codable> {
             pub = sub.pub
         }
         
-        if (sub.updated != nil) && (touched != nil || touched!.compareDate(date: sub.touched) == .orderedAscending) {
+        if (sub.touched != nil) && (touched != nil || ((touched?.before(date: sub.touched!))!)) {
             touched = sub.touched
         }
         

@@ -26,53 +26,53 @@ public protocol Storage {
     func iSSReady() -> Bool
     
     // Fetch all topics
-    func topicGetAll<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(tinode: Tinode) -> [Topic<DP,DR,SP,SR>]
+    func topicGetAll(tinode: Tinode) -> [Topic]
     // Add new topic
     @discardableResult
-    func topicAdd<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) -> Int64
+    func topicAdd(topic: Topic) -> Int64
     
     /** Incoming change to topic description: the already mutated topic in memory is synchronized to DB */
     @discardableResult
-    func topicUpdate<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) -> Bool
+    func topicUpdate(topic: Topic) -> Bool
     
     /** Delete topic */
     @discardableResult
-    func topicDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) -> Bool
+    func topicDelete(topic: Topic) -> Bool
     
     /** Get seq IDs of the stored messages as a Range */
-    func getCachedMessageSSRange<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) -> TRange
+    func getCachedMessageSSRange(topic: Topic) -> TRange
     /** Local user reported messages as read */
-    func setRead<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, read: Int) -> Bool
+    func setRead(topic: Topic, read: Int) -> Bool
     /** Local user reported messages as received */
-    func setRecv<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>,recv: Int) -> Bool
+    func setRecv(topic: Topic,recv: Int) -> Bool
     
     /** Add subscription in a generic topic. The subscription is received from the server. */
     @discardableResult
-    func subAdd<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, sub: Subscription<SP,SR>) -> Int64
+    func subAdd(topic: Topic, sub: Subscription) -> Int64
     /** Update subscription in a generic topic */
-    func subUpdate<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, sub: Subscription<SP,SR>)
+    func subUpdate(topic: Topic, sub: Subscription)
     /** Add a new subscriber to topic. The new subscriber is being added locally. */
-    func subNew<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>,sub: Subscription<SP,SR>) -> Int64
+    func subNew(topic: Topic,sub: Subscription) -> Int64
     /** Delete existing subscription */
     @discardableResult
-    func subDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>,sub: Subscription<SP,SR>) -> Bool
+    func subDelete(topic: Topic,sub: Subscription) -> Bool
     
     /** Get a list o topic subscriptions from DB. */
-    func getSubscriptions<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) -> [Subscription<SP,SR>]
+    func getSubscriptions(topic: Topic) -> [Subscription]
     
     /** Read user description */
-    func userGet<P: Codable,R: Codable>(uid: String) -> User<P,R>
+    func userGet(uid: String) -> User
     /** Insert new user */
     @discardableResult
-    func userAdd<P: Codable,R: Codable>(user: User<P,R>) -> Int64
+    func userAdd(user: User) -> Int64
     /** Update existing user */
     @discardableResult
-    func userUpdate<P: Codable,R: Codable>(user: User<P,R>) -> Bool
+    func userUpdate(user: User) -> Bool
     
     /**
      * Message received from the server.
      */
-    func msgReceived<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, sub: Subscription<SP,SR>, msg: ServerMessage) -> Int64
+    func msgReceived(topic: Topic, sub: Subscription, msg: ServerMessage) -> Int64
     
     /**
      * Save message to DB as queued or synced.
@@ -82,7 +82,7 @@ public protocol Storage {
      * @return database ID of the message suitable for use in
      *  {@link #msgDelivered(Topic topic, long id, Date timestamp, int seq)}
      */
-    func msgSend<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, data: Drafty)
+    func msgSend(topic: Topic, data: Drafty)
     
     /**
      * Save message to database as a SDRaft. SDRaft will not be sent to server until it status changes.
@@ -92,7 +92,7 @@ public protocol Storage {
      * @return database ID of the message suitable for use in
      *  {@link #msgDelivered(Topic topic, long id, Date timestamp, int seq)}
      */
-    func msgSDRaft<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, data: Drafty)
+    func msgSDRaft(topic: Topic, data: Drafty)
     
     /**
      * Update message SDRaft content without
@@ -102,7 +102,7 @@ public protocol Storage {
      * @param data updated content of the message. Must not be null.
      * @return true on success, false otherwise
      */
-    func msgSDRaftUpdate<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, dbMessageId: UInt64, data: Drafty) -> Bool
+    func msgSDRaftUpdate(topic: Topic, dbMessageId: UInt64, data: Drafty) -> Bool
     
     /**
      * Message is ready to be sent to the server.
@@ -112,12 +112,12 @@ public protocol Storage {
      * @param data updated content of the message. If null only status is updated.
      * @return true on success, false otherwise
      */
-    func msgReady<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, dbMessageId:Int64, data: Drafty) -> Bool
+    func msgReady(topic: Topic, dbMessageId:Int64, data: Drafty) -> Bool
     
     /**
      * Delete message by database id.
      */
-    func msgDiscard<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, dbMessageId: Int64) -> Bool
+    func msgDiscard(topic: Topic, dbMessageId: Int64) -> Bool
     
     /**
      * Message delivered to the server and received a real seq ID.
@@ -128,26 +128,26 @@ public protocol Storage {
      * @param seq server-issued message seqId.
      * @return true on success, false otherwise     *
      */
-    func msgDelivered<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool
+    func msgDelivered(topic: Topic, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool
     /** Mark messages for deletion by range */
-    func msgMarkToDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, fromId: Int, toId: Int, markAsHard: Bool) -> Bool
+    func msgMarkToDelete(topic: Topic, fromId: Int, toId: Int, markAsHard: Bool) -> Bool
     /** Mark messages for deletion by seq ID list */
-    func msgMarkToDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, list: [Int], markAsHard: Bool) -> Bool
+    func msgMarkToDelete(topic: Topic, list: [Int], markAsHard: Bool) -> Bool
     /** Delete messages */
     @discardableResult
-    func msgDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, delId: Int, fromId: Int, toId: Int) -> Bool
+    func msgDelete(topic: Topic, delId: Int, fromId: Int, toId: Int) -> Bool
     /** Delete messages */
-    func msgDelete<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, delId: Int, list: [Int]) -> Bool
+    func msgDelete(topic: Topic, delId: Int, list: [Int]) -> Bool
     /** Set recv value for a given subscriber */
-    func msgRecvByRemote<SP: Codable, SR: Codable>(sub: Subscription<SP,SR>, recv: Int) -> Bool
+    func msgRecvByRemote(sub: Subscription, recv: Int) -> Bool
     /** Set read value for a given subscriber */
-    func msgReadByRemote<SP: Codable, SR: Codable>(sub: Subscription<SP,SR>, read: Int) -> Bool
+    func msgReadByRemote(sub: Subscription, read: Int) -> Bool
     
-    func getMessageById<T: Message, DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, messageId: String) ->T
+    func getMessageById<T: Message>(topic: Topic, messageId: String) ->T
     
-    func getQueuedMessages<T: Message, DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>) ->T
+    func getQueuedMessages<T: Message>(topic: Topic) ->T
     
-    func getQueuedMessageDeletes<DP: Codable, DR: Codable, SP: Codable, SR: Codable>(topic: Topic<DP,DR,SP,SR>, hard: Bool) -> [Int]
+    func getQueuedMessageDeletes(topic: Topic, hard: Bool) -> [Int]
     
 }
 

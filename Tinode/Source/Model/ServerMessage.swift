@@ -9,8 +9,13 @@
 import Foundation
 
 
-public struct ServerMessage : Decodable{
-   public var ctrl: Ctrl?
+public struct ServerMessage: Decodable{
+    public var ctrl: MsgServerCtrl?
+    public var data: MsgServerData?
+    public var pres: MsgServerPres?
+    public var info: MsgServerInfo?
+    
+    
 }
 
 extension ServerMessage {

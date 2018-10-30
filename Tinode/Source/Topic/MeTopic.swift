@@ -8,21 +8,20 @@
 
 import Foundation
 
-public class MeTopic<DP: Codable>: Topic<DP, Dictionary<String,String>, DP, Dictionary<String,String>> {
+public class MeTopic: Topic {
     
-    public init(tinode: Tinode, delegate: TopicDelegete?) {
-        super.init(tinode: tinode, name: Tinode.TOPIC_ME, delegate: delegate)
+    public init(tinode: Tinode) {
+        super.init(tinode: tinode, name: Tinode.TOPIC_ME)
     }
     
-    override init(tinode: Tinode, name: String, desc: Description<DP, Dictionary<String,String>>) {
+    override init(tinode: Tinode, name: String, desc: Description) {
         super.init(tinode: tinode, name: name, desc: desc)
     }
-    
-    
-    override public func routeMeta(meta: MsgServerMeta<DP, Dictionary<String, String>, DP, Dictionary<String, String>>) {
+
+    override public func routeMeta(meta: MsgServerMeta) {
         if let subs = meta.sub {
             for sub in subs {
-                let topic: Topic<DP,Dictionary<String, String>,DP,Dictionary<String, String>>? = tinode.getTopic(name: sub.topic!)
+                let topic: Topic? = tinode.getTopic(name: sub.topic!)
                 
                 if topic != nil {
                     if sub.deleted != nil {
@@ -30,17 +29,16 @@ public class MeTopic<DP: Codable>: Topic<DP, Dictionary<String,String>, DP, Dict
                     } else {
                         topic?.update(sub: sub)
                         
-                        delegeta?.onContUpdate(sub: sub)
+                        onContUpdate?(sub)
                     }
                 } else if sub.deleted == nil {
-                    let t:Topic<DP,Dictionary<String, String>,DP,Dictionary<String, String>> = tinode.newTopic(sub: sub)
+                    let t:Topic = tinode.newTopic(sub: sub)
                     tinode.registerTopic(topic: t)
                     
-                    delegeta?.onMetaSub(sub: sub)
+                    onMetaSub?(sub)
                 }
                 
-                delegeta?.onSubsUpdated()
-                
+                onSubsUpdated?()
             }
         }
     }

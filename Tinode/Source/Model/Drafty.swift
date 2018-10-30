@@ -8,6 +8,22 @@
 
 import Foundation
 
-public class Drafty {
+public struct Drafty: Codable {
+    public var txt: String?
+    public var fmt: [Style]?
+    public var ent: [Entity]?
+}
+
+public struct Style: Codable {
     
+    public var at: Int?
+    public var len: Int?
+    public var tp: String?
+    public var key: Int?
+    public var data: Dictionary<String,String>?
+}
+
+public struct Entity: Codable {
+    public var tp: String?
+    public var data: Dictionary<String,String>?
 }

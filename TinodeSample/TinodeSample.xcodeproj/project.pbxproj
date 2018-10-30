@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D56276C218448B500B173A0 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D56276B218448B500B173A0 /* SnapKit.framework */; };
+		7D56276D218448B500B173A0 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7D56276B218448B500B173A0 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7D56276F218448F000B173A0 /* ContactsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D56276E218448F000B173A0 /* ContactsController.swift */; };
+		7D56277321844E1500B173A0 /* IndexViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D56277221844E1500B173A0 /* IndexViewController.swift */; };
+		7D56277521844E8F00B173A0 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D56277421844E8F00B173A0 /* ChatViewController.swift */; };
 		7D8D6B91216F7FC0002525F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8D6B90216F7FC0002525F0 /* AppDelegate.swift */; };
 		7D8D6B93216F7FC0002525F0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8D6B92216F7FC0002525F0 /* ViewController.swift */; };
 		7D8D6B96216F7FC0002525F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D8D6B94216F7FC0002525F0 /* Main.storyboard */; };
@@ -28,6 +33,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				7D56276D218448B500B173A0 /* SnapKit.framework in Embed Frameworks */,
 				7D8D6BA5216F8018002525F0 /* Tinode.framework in Embed Frameworks */,
 				7D8D6BAC216F818C002525F0 /* Starscream.framework in Embed Frameworks */,
 			);
@@ -37,6 +43,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7D56276B218448B500B173A0 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
+		7D56276E218448F000B173A0 /* ContactsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsController.swift; sourceTree = "<group>"; };
+		7D56277221844E1500B173A0 /* IndexViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexViewController.swift; sourceTree = "<group>"; };
+		7D56277421844E8F00B173A0 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		7D8D6B8D216F7FC0002525F0 /* TinodeSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TinodeSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D8D6B90216F7FC0002525F0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D8D6B92216F7FC0002525F0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -56,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D56276C218448B500B173A0 /* SnapKit.framework in Frameworks */,
 				7D8D6BA4216F8018002525F0 /* Tinode.framework in Frameworks */,
 				7D8D6BAB216F818C002525F0 /* Starscream.framework in Frameworks */,
 			);
@@ -64,9 +75,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7D56277021844BCB00B173A0 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		7D56277121844BDD00B173A0 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				7D56276E218448F000B173A0 /* ContactsController.swift */,
+				7DC3728121787FC8006AB6B3 /* RegisterViewController.swift */,
+				7DC3728321788F69006AB6B3 /* UIViewController+Tinode.swift */,
+				7DC372852179DD35006AB6B3 /* ValidateViewController.swift */,
+				7D8D6B92216F7FC0002525F0 /* ViewController.swift */,
+				7D56277221844E1500B173A0 /* IndexViewController.swift */,
+				7D56277421844E8F00B173A0 /* ChatViewController.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
 		7D8D6B84216F7FC0002525F0 = {
 			isa = PBXGroup;
 			children = (
+				7D56276B218448B500B173A0 /* SnapKit.framework */,
 				7D8D6BAA216F818C002525F0 /* Starscream.framework */,
 				7D8D6BA3216F8018002525F0 /* Tinode.framework */,
 				7D8D6B8F216F7FC0002525F0 /* TinodeSample */,
@@ -85,11 +118,9 @@
 		7D8D6B8F216F7FC0002525F0 /* TinodeSample */ = {
 			isa = PBXGroup;
 			children = (
+				7D56277121844BDD00B173A0 /* Controllers */,
+				7D56277021844BCB00B173A0 /* View */,
 				7D8D6B90216F7FC0002525F0 /* AppDelegate.swift */,
-				7DC3728121787FC8006AB6B3 /* RegisterViewController.swift */,
-				7DC3728321788F69006AB6B3 /* UIViewController+Tinode.swift */,
-				7DC372852179DD35006AB6B3 /* ValidateViewController.swift */,
-				7D8D6B92216F7FC0002525F0 /* ViewController.swift */,
 				7D8D6BA2216F7FE8002525F0 /* Supporting Files */,
 			);
 			path = TinodeSample;
@@ -180,8 +211,11 @@
 			files = (
 				7DC3728221787FC8006AB6B3 /* RegisterViewController.swift in Sources */,
 				7D8D6B93216F7FC0002525F0 /* ViewController.swift in Sources */,
+				7D56277521844E8F00B173A0 /* ChatViewController.swift in Sources */,
 				7D8D6B91216F7FC0002525F0 /* AppDelegate.swift in Sources */,
 				7DC372862179DD35006AB6B3 /* ValidateViewController.swift in Sources */,
+				7D56276F218448F000B173A0 /* ContactsController.swift in Sources */,
+				7D56277321844E1500B173A0 /* IndexViewController.swift in Sources */,
 				7DC3728421788F69006AB6B3 /* UIViewController+Tinode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

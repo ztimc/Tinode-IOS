@@ -9,7 +9,7 @@
 import Foundation
 
 public struct AcsHelper: Codable {
-    var a: Int?
+    public var a: Int?
     
     init(a: String) {
         self.a = Int(a)

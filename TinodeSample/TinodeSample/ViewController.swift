@@ -15,45 +15,31 @@ class ViewController: UIViewController {
     @IBOutlet weak var passwordText: UITextField!
     
     var tinode: Tinode?
-    var meTopic: MeTopic<VCard>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
        
         tinode = getTinode()
-        meTopic = MeTopic(tinode: tinode!, delegate: nil)
     }
-    
-
 
     @IBAction func onLoginClick(_ sender: UIButton) {
         if let user = userNameText.text, let pwd = passwordText.text {
             tinode?.login(userName: user, password: pwd)
-                .then(result: { msg in
-                    
-                   
-                    self.topicAttach()
+                .then(result: {  (msg) in
+                    DispatchQueue.main.async {
+                        let indexVC = IndexViewController()
+                        let transtition = CATransition()
+                        transtition.duration = 0.5
+                        transtition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+                        UIApplication.shared.keyWindow?.layer.add(transtition, forKey: "animation")
+                        UIApplication.shared.keyWindow?.rootViewController = indexVC
+                    }
                     return nil
             }) { error in
-                print(error.err ?? "登陆失败")
-                return nil
+                    print(error.err ?? "登陆失败")
+                    return nil
                 }
         }
-    }
-    
-    public func topicAttach() {
-        meTopic?.subscribe(set: nil,
-                           get: meTopic?.getMetaGetBuilder()
-                                        .withGetDesc()
-                                        .withGetSub()
-                                        .build())
-            .then(result: { (msg) -> Pine<ServerMessage>? in
-                print(msg)
-                return nil
-            }, failure: { (error) -> Pine<ServerMessage>? in
-                print(error)
-                return nil
-            })
     }
     
 }

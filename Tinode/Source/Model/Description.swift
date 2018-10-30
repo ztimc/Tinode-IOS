@@ -8,12 +8,12 @@
 
 import Foundation
 
-public struct Description<DP: Codable, DR: Codable> : Codable {
+public struct Description : Decodable {
     
-    var created: String?
-    var updated: String?
-    var touched: String?
-    var topic  : String?
+    var created: Date?
+    var updated: Date?
+    var touched: Date?
+    var topic  : Date?
     
     var seq:   Int = 0
     var read:  Int = 0
@@ -22,13 +22,13 @@ public struct Description<DP: Codable, DR: Codable> : Codable {
     
     var defacs: Defacs?
     var acs: Acs?
-    var pub: DP?
-    var priv: DR?
+    var pub: JSON?
+    var priv: JSON?
     
     init() {}
     
     @discardableResult
-    mutating func merge(desc: Description<DP,DR>) -> Bool {
+    mutating func merge(desc: Description) -> Bool {
         var changed = 0
         
         if created == nil && desc.created != nil {
@@ -36,12 +36,12 @@ public struct Description<DP: Codable, DR: Codable> : Codable {
             changed += 1
         }
         
-        if desc.updated != nil && (updated == nil || (updated!.compareDate(date: desc.updated) == .orderedAscending)){
+        if desc.updated != nil && (updated == nil || updated!.before(date: desc.updated!)){
             updated = desc.updated
             changed += 1
         }
         
-        if desc.touched != nil && (touched == nil || (touched!.compareDate(date: desc.touched) == .orderedAscending)) {
+        if desc.touched != nil && (touched == nil || touched!.before(date: desc.touched!)) {
             touched = desc.touched
             changed += 1
         }
@@ -90,14 +90,12 @@ public struct Description<DP: Codable, DR: Codable> : Codable {
     }
     
     @discardableResult
-    public mutating func merge<SP, SR>(sub: Subscription<SP,SR>) -> Bool {
+    public mutating func merge(sub: Subscription) -> Bool {
         var changed = 0
         
-        if let subUpdated = Formatter.iso8601.date(from: sub.updated ?? "") {
-            if updated == nil {
-                updated = Formatter.iso8601.string(from: subUpdated)
-                changed += 1
-            }
+        if sub.updated != nil && (updated == nil || updated!.before(date: sub.updated!)){
+            updated = sub.updated
+            changed += 1
         }
         
         if sub.seq > seq {
@@ -121,14 +119,14 @@ public struct Description<DP: Codable, DR: Codable> : Codable {
         }
         
         if sub.pub != nil {
-            pub = sub.pub as? DP
+            pub = sub.pub
             if pub != nil {
                 changed += 1
             }
         }
         
         if sub.priv != nil {
-            priv = sub.priv as? DR
+            priv = sub.priv
             if priv != nil {
                 changed += 1
             }

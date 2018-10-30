@@ -62,11 +62,9 @@ public enum JSON: Decodable {
         }
         self = .array(arr)
     }
-    
-    
-    
-    
 }
+
+
 
 struct JSONCodingKeys: CodingKey {
     var stringValue: String

@@ -10,14 +10,14 @@ import Foundation
 
 public struct MetaGetSub : Codable {
     public var user: String?
-    public var ims: String?
+    public var ims: Date?
     public var limit: Int?
     
     init() {}
     
     
     init(user: String?,
-         ims: String?,
+         ims: Date?,
          limit: Int?) {
         self.user = user
         self.ims = ims

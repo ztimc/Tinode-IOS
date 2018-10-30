@@ -28,10 +28,11 @@
 
 import Foundation
 
-public struct Ctrl: Decodable {
+public struct MsgServerCtrl: Decodable {
     public let id: String
     public let code: Int
-    public let text, ts: String
+    public let text: String
+    public let ts: Date
     public var topic: String?
     public var params: JSON?
     

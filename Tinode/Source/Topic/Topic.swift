@@ -8,60 +8,74 @@
 
 import Foundation
 
-public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
+public class Topic {
+    
+    
+    public var onSubscribe: ((_ code: Int, _ text: String) -> ())?
+    public var onLeave: ((_ unsub: Bool, _ code: Int, _ text: String) -> ())?
+    public var onData: ((_ data: MsgServerData?) -> ())?
+    public var onAllMessagesReceived: ((_ count: Int) -> ())?
+    public var onInfo: ((_ info: MsgServerData) -> ())?
+    public var onMeta: ((_ meta: MsgServerMeta) -> ())?
+    public var onMetaDesc: ((_ desc: Description) -> ())?
+    public var onMetaSub: ((_ sub: Subscription) -> ())?
+    public var onMetaTags: ((_ tags: [String]) -> ())?
+    public var onSubsUpdated: (() -> ())?
+    public var onPres: ((_ pres: MsgServerPres) -> ())?
+    public var onOnline: ((_ online: Bool) -> ())?
+    public var onContUpdate: ((_ sub: Subscription) -> ())?
+    
     
     var tinode:  Tinode
     var name:    String
     var storage: Storage?
-    var delegeta: TopicDelegete?
     
-    var desc:        Description<DP,DR>?
-    var subs:        Dictionary<String, Subscription<SP,SR>>?
-    public var subsUpdated: String?
+    var desc:        Description?
+    var subs:        Dictionary<String, Subscription>?
     var tags:        [String]?
     
     public var attached: Bool = false
+    public var subsUpdated: Date?
     var lastKeyPress: Int64 = 0
     var isOnline = false
     var lastSeen: LastSeen?
     var maxDel: Int = 0
     
-    init(tinode: Tinode, sub: Subscription<SP,SR>) {
+    init(tinode: Tinode, sub: Subscription) {
         self.tinode   = tinode
         self.name     = sub.topic!
         self.isOnline = sub.online
-        self.desc     = Description<DP,DR>()
+        self.desc     = Description()
         
         self.desc?.merge(sub: sub)
     }
     
-    init(tinode: Tinode, name: String, desc: Description<DP,DR>) {
+    init(tinode: Tinode, name: String, desc: Description) {
         self.tinode = tinode
         self.name   = name
-        self.desc   = Description<DP,DR>()
+        self.desc   = Description()
         
         self.desc?.merge(desc: desc)
     }
     
-    init(tinode: Tinode, name: String, delegate: TopicDelegete?) {
+    init(tinode: Tinode, name: String) {
         self.tinode   = tinode
-        self.delegeta = delegate
         self.name     = name
-        self.desc     = Description<DP,DR>()
+        self.desc     = Description()
     }
     
-    convenience init(tinode: Tinode, delegate: TopicDelegete) {
-        self.init(tinode: tinode, name: Tinode.TOPIC_NEW, delegate: delegate)
+    convenience init(tinode: Tinode) {
+        self.init(tinode: tinode, name: Tinode.TOPIC_NEW)
     }
     
-    public func subscribe(set: MsgSetMeta<DP,DR>?, get: MsgGetMeta?) -> Pine<ServerMessage>{
+    public func subscribe<Pu: Codable, Pr: Codable>(set: MsgSetMeta<Pu, Pr>?, get: MsgGetMeta?) -> Pine<ServerMessage>{
         if attached || !tinode.isConnect() {
             return Pine(err: TOError(err: "attached", code: -1, reson: "not need call"))
         }
         
         var newTopic: Bool
         let topicName = name
-        let topic: Topic<DP,DR,SP,SR>? = tinode.getTopic(name: topicName)
+        let topic: Topic? = tinode.getTopic(name: topicName)
         if topic == nil {
             tinode.registerTopic(topic: self)
             newTopic = true
@@ -83,7 +97,7 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
                             this.tinode.changeTopicName(topic: this, oldName: topicName)
                         }
                         this.storage?.topicUpdate(topic: this)
-                        this.delegeta?.onSubscribe(code: (msg.ctrl?.code)!, text: (msg.ctrl?.text)!)
+                        this.onSubscribe?((msg.ctrl?.code)!, (msg.ctrl?.text)!)
                     }
                 }
                 return Pine(result: msg)
@@ -100,11 +114,11 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
             })
     }
     
-    public func setUpdated(updated: String?) {
+    public func setUpdated(updated: Date?) {
         desc?.updated = updated
     }
     
-    public func getUpdated() -> String? {
+    public func getUpdated() -> Date? {
         return desc?.updated
     }
     
@@ -128,6 +142,10 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         }
     }
     
+    public func getPriv() -> JSON?{
+        return desc?.priv
+    }
+    
     @discardableResult
     public func loadSubs() -> Int {
         guard let ss = storage?.getSubscriptions(topic: self) else {
@@ -135,7 +153,7 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         }
         
         for s in ss {
-            if subsUpdated == nil || subsUpdated?.compareDate(date: s.updated) == .orderedAscending{
+            if subsUpdated == nil || subsUpdated!.before(date: s.updated!){
                 subsUpdated = s.updated
             }
             addSubToCache(sub: s)
@@ -144,18 +162,18 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         return subs?.count ?? 0
     }
     
-    public func addSubToCache(sub: Subscription<SP,SR>) {
+    public func addSubToCache(sub: Subscription) {
         if subs == nil {
-            subs = Dictionary<String, Subscription<SP,SR>>()
+            subs = Dictionary<String, Subscription>()
         }
         subs![sub.user!] = sub
     }
     
-    public func removeSubFromCache(sub: Subscription<SP,SR>) {
+    public func removeSubFromCache(sub: Subscription) {
         subs?.removeValue(forKey: sub.user!)
     }
     
-    public func getSubscription(key: String) -> Subscription<SP,SR>? {
+    public func getSubscription(key: String) -> Subscription? {
         if subs == nil { loadSubs() }
         
         return subs![key]
@@ -172,13 +190,13 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         return desc?.acs?.update(ac: ac) ?? false
     }
     
-    public func update(desc: Description<DP,DR>) {
+    public func update(desc: Description) {
         if (self.desc!.merge(desc: desc)) {
             storage?.topicUpdate(topic: self)
         }
     }
     
-    public func update(sub: Subscription<SP,SR>) {
+    public func update(sub: Subscription) {
         if (self.desc!.merge(sub: sub)) {
             storage?.topicUpdate(topic: self)
         }
@@ -199,7 +217,11 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         
         setMaxDel(max: clear!)
         
-        delegeta?.onData(data: nil)
+        onData?(nil)
+    }
+    
+    public func getTopicType() -> TopicType {
+        return getTopicType(name: self.name)
     }
     
     public func getTopicType(name: String) -> TopicType {
@@ -235,8 +257,8 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         return getTopicType(name: name) == .grp
     }
     
-    public func processSub(newSub: Subscription<SP,SR>) {
-        var sub: Subscription<SP,SR>?
+    public func processSub(newSub: Subscription) {
+        var sub: Subscription?
         
         if newSub.deleted != nil {
             storage?.subDelete(topic: self, sub: newSub)
@@ -256,16 +278,15 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
             tinode.updateUser(sub: sub!)
         }
         
-        delegeta?.onMetaSub(sub: sub!)
-        
+        onMetaSub?(sub!)
     }
     
-    public func getMetaGetBuilder() -> MetaGetBuilder<DP,DR,SP,SR> {
+    public func getMetaGetBuilder() -> MetaGetBuilder {
         return MetaGetBuilder.init(topic: self)
     }
     
     public func routePres(pres: MsgServerPres) {
-        var sub: Subscription<SP,SR>?
+        var sub: Subscription?
         switch pres.what {
         case What.on.rawValue,
              What.off.rawValue:
@@ -296,8 +317,7 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
                     if isP2PType() {
                         leave()
                     }
-                    sub?.deleted = Formatter.iso8601.string(from: Date())
-                    
+                    sub?.deleted = Date()
                 }
                 
             }
@@ -305,23 +325,28 @@ public class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable> {
         default:
             break
         }
-        delegeta?.onPres(pres: pres)
+
+        onPres?(pres)
     }
     
-    public func routeMeta(meta: MsgServerMeta<DP,DR,SP,SR>) {
+    public func routeMeta(meta: MsgServerMeta) {
         if meta.desc != nil {
-            routeMeta(meta: meta)
+            routeMateDesc(meta: meta)
+        }
+        
+        if meta.sub != nil {
+            
         }
     }
     
-    public func routeMateDesc(meta: MsgServerMeta<DP,DR,SP,SR>) {
+    public func routeMateDesc(meta: MsgServerMeta) {
         update(desc: meta.desc!)
         
         if getTopicType(name: name) == .p2p {
             tinode.updateUser(uid: name, desc: meta.desc!)
         }
         
-        delegeta?.onMetaDesc(desc: meta.desc!)
+        onMetaDesc?(meta.desc!)
     }
     
     

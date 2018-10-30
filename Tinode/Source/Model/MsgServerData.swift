@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct MsgServerData {
+public struct MsgServerData: Codable {
     
     var id: String
     var topic: String
@@ -16,7 +16,5 @@ public struct MsgServerData {
     var ts: String
     var seq: Int
     var content: Drafty
-    
-    var head: Dictionary<String, JSON>
     
 }
