@@ -105,6 +105,7 @@ public struct MsgGetMeta : Codable {
             what?.append(parts[0])
             if parts.count > 1 {
                 for index in 1...(parts.count-1) {
+                    what?.append(" ")
                     what?.append(parts[index])
                 }
             }

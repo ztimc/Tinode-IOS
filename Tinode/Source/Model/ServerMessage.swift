@@ -14,8 +14,7 @@ public struct ServerMessage: Decodable{
     public var data: MsgServerData?
     public var pres: MsgServerPres?
     public var info: MsgServerInfo?
-    
-    
+    public var meta: MsgServerMeta?
 }
 
 extension ServerMessage {

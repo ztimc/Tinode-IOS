@@ -12,7 +12,7 @@ public struct AcsHelper: Codable {
     public var a: Int?
     
     init(a: String) {
-        self.a = Int(a)
+        self.a = AcsHelper.decode(mode: a)
     }
     
     init(ah: AcsHelper?) {
@@ -22,8 +22,6 @@ public struct AcsHelper: Codable {
     init(a: Int) {
         self.a = a
     }
-    
-   
     
     public func update(umode: String) -> Bool {
         return true
@@ -84,18 +82,76 @@ public struct AcsHelper: Codable {
         return a != nil && a == AccessMode.invalid.rawValue
     }
     
-    // TODO: 权限处理
+    public static func decode(mode: String) -> Int? {
+        
+        var m0: Int = AccessMode.none.rawValue
+        
+        let modeArr = Array(mode)
+        
+        for c in modeArr {
+            switch c {
+                case "J","j":
+                m0 |= AccessMode.join.rawValue
+            case "R", "r":
+                m0 |= AccessMode.read.rawValue
+            case "W", "w":
+                m0 |= AccessMode.write.rawValue
+            case "A","a":
+                m0 |= AccessMode.approve.rawValue
+            case "S", "s":
+                m0 |= AccessMode.share.rawValue
+            case "D", "d":
+                m0 |= AccessMode.delete.rawValue
+            case "P", "p":
+                m0 |= AccessMode.pres.rawValue
+            case "O", "o":
+                m0 |= AccessMode.owner.rawValue
+            case "N", "n":
+                m0 |= AccessMode.none.rawValue
+            default:
+                m0 |= AccessMode.invalid.rawValue
+            }
+        }
+        
+        return m0
+    }
+    
+    public static func encode(val: Int?) -> String? {
+        if val == nil || val == AccessMode.invalid.rawValue{
+            return nil
+        }
+        
+        if val == 0 {
+            return "N"
+        }
+        
+        var res = ""
+        let modes = ["J","R","W","P","A","S","D","O"]
+        
+        for (i, m) in modes.enumerated() {
+            if ((val! & (1 << i)) != 0) {
+                res.append(m)
+            }
+        }
+        
+        return res
+    }
+    
     static func update(val: Int, umode: String?) -> Int{
         guard let mode = umode, mode.count > 0 else {
             return val
         }
         
         
+        /*
         let action = mode[mode.startIndex]
         
         if action == "+" || action == "-" {
+            var val0 = val
+            let separatorSet = CharacterSet(charactersIn: "-+")
+            let splits = umode?.components(separatedBy: separatorSet)
             
-        }
+        }*/
         
         return 0;
     }
@@ -123,3 +179,4 @@ enum AccessMode: Int {
     case owner = 0x80
     case invalid = 0x100000
 }
+

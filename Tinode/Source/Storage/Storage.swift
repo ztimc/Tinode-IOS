@@ -139,8 +139,10 @@ public protocol Storage {
     /** Delete messages */
     func msgDelete(topic: Topic, delId: Int, list: [Int]) -> Bool
     /** Set recv value for a given subscriber */
+    @discardableResult
     func msgRecvByRemote(sub: Subscription, recv: Int) -> Bool
     /** Set read value for a given subscriber */
+    @discardableResult
     func msgReadByRemote(sub: Subscription, read: Int) -> Bool
     
     func getMessageById<T: Message>(topic: Topic, messageId: String) ->T

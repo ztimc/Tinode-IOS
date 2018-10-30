@@ -20,6 +20,10 @@ public class Tinode : NSObject, ConfigSettable {
     static let TOPIC_GRP_PREFIX = "grp"
     static let TOPIC_USR_PREFIX = "new"
     
+    static let NOTE_KP = "kp"
+    static let NOTE_RAED = "read"
+    static let NOTE_RECV = "recv"
+    
     
     // MARK: Properties
     
@@ -86,7 +90,7 @@ public class Tinode : NSObject, ConfigSettable {
         }
         socket?.onText = {[weak self] text in
             guard let this = self else { return }
-            DefaultSocketLogger.Logger.log("onText" + text, type: Tinode.logType)
+            DefaultSocketLogger.Logger.log("in: " + text, type: Tinode.logType)
             
             let serverMsg = try! ServerMessage.init(text, using: .utf8)
             this.dispatchMessage(msg: serverMsg)
@@ -153,6 +157,7 @@ public class Tinode : NSObject, ConfigSettable {
                                                             cred: [Credential]) -> Pine<ServerMessage> {
         return account(uid: nil, type: .basic, secret: (uname + ":" + password).toBase64(), loginNow: login, tags: tags, desc: desc, cred: cred)
     }
+    
     
     public func getFilteredTopics<T: Topic>(type: TopicType, date: Date?) -> [T] {
         if type == .any && date == nil {
@@ -290,6 +295,7 @@ public class Tinode : NSObject, ConfigSettable {
         
         return sendMessage(id: msg.login!.id, msg: &msg)
     }
+
     
     private func account<Pu: Codable,Pr: Codable> (uid: String?,
                                                     type: AuthType,
@@ -319,10 +325,29 @@ public class Tinode : NSObject, ConfigSettable {
         })
     }
     
+    @discardableResult
+    private func maybeCreateTopic(meta: MsgServerMeta) -> Topic? {
+        if (meta.desc == nil) { return nil }
+        
+        var topic: Topic
+        
+        if Tinode.TOPIC_ME == meta.topic {
+            topic = MeTopic(tinode: self, desc: meta.desc!)
+        } else if Tinode.TOPIC_FND == meta.topic {
+            topic = FndTopic(tinode: self)
+        } else {
+            topic = ComTopic(tinode: self, name: meta.topic!, desc: meta.desc!)
+        }
+        
+        registerTopic(topic: topic)
+        
+        return topic
+    }
+    
     private func dispatchMessage(msg: ServerMessage) {
         
         if let id = msg.ctrl?.id, let code = msg.ctrl?.code {
-            let pine = futures[id]
+            let pine = futures.removeValue(forKey: id)
             
             if code >= 200 && code < 400 {
                 pine?.resolve(result: msg)
@@ -330,16 +355,46 @@ public class Tinode : NSObject, ConfigSettable {
                 pine?.reject(error: TOError(err: msg.ctrl?.text, code: msg.ctrl?.code, reson: msg.ctrl?.params?.getStringValue(key: "what")))
             }
             futures.removeValue(forKey: id)
+        } else if let id = msg.meta?.id {
+            if let topic = getTopic(name: (msg.meta?.topic)!) {
+                topic.routeMeta(meta: msg.meta!)
+            } else {
+                maybeCreateTopic(meta: msg.meta!)
+            }
+            
+            resolveWithMsg(id: id, msg: msg)
+        } else if msg.pres != nil {
+            if let topic = getTopic(name: msg.pres!.topic!) {
+                topic.routePres(pres: msg.pres!)
+                
+                if Tinode.TOPIC_ME == msg.pres!.topic && Topic.getTopicType(name: msg.pres!.src!) == .p2p {
+                    if let forwardTo = getTopic(name: msg.pres!.src!){
+                        forwardTo.routePres(pres: msg.pres!)
+                    }
+                }
+            }
+        } else if msg.info != nil {
+            if let topic = getTopic(name: msg.info!.topic!) {
+                topic.routeInfo(info: msg.info!)
+            }
         }
         
         
+    }
+    
+    private func resolveWithMsg(id: String, msg: ServerMessage) {
+        if let pine = futures.removeValue(forKey: id) {
+            pine.resolve(result: msg)
+        }
     }
     
     private func sendMessage<Pu: Codable, Pr: Codable>(id: String, msg: inout ClientMessage<Pu, Pr>) -> Pine<ServerMessage> {
         
         let pine = Pine<ServerMessage>()
         futures[id] = pine
-        socket?.send(message: try! msg.jsonString()!)
+        let json = try! msg.jsonString()!
+        DefaultSocketLogger.Logger.log("out: " + json, type: Tinode.logType)
+        socket?.send(message: json)
         
         return pine
     }

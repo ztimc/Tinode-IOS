@@ -10,6 +10,7 @@
 		7D3B7B792187EF9A007B9544 /* FndTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3B7B782187EF9A007B9544 /* FndTopic.swift */; };
 		7D3B7B7B2187F879007B9544 /* Date+Compare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3B7B7A2187F879007B9544 /* Date+Compare.swift */; };
 		7D3B7B7D21880155007B9544 /* Formatter+ISO8601.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3B7B7C21880155007B9544 /* Formatter+ISO8601.swift */; };
+		7D3B7B7F21886123007B9544 /* String+Acs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3B7B7E21886123007B9544 /* String+Acs.swift */; };
 		7D4EC5F12171E69B00A57BD2 /* MsgClientLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5F02171E69B00A57BD2 /* MsgClientLogin.swift */; };
 		7D4EC5F32171EE8200A57BD2 /* AuthScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5F22171EE8200A57BD2 /* AuthScheme.swift */; };
 		7D4EC5F62171F44600A57BD2 /* String+Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5F52171F44600A57BD2 /* String+Base64.swift */; };
@@ -68,6 +69,7 @@
 		7D3B7B782187EF9A007B9544 /* FndTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FndTopic.swift; path = ../../../Tinode/Source/Topic/FndTopic.swift; sourceTree = "<group>"; };
 		7D3B7B7A2187F879007B9544 /* Date+Compare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Date+Compare.swift"; path = "../../../Tinode/Source/Extension/Date+Compare.swift"; sourceTree = "<group>"; };
 		7D3B7B7C21880155007B9544 /* Formatter+ISO8601.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Formatter+ISO8601.swift"; path = "../../../Tinode/Source/Extension/Formatter+ISO8601.swift"; sourceTree = "<group>"; };
+		7D3B7B7E21886123007B9544 /* String+Acs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Acs.swift"; path = "../../../Tinode/Source/Extension/String+Acs.swift"; sourceTree = "<group>"; };
 		7D4EC5F02171E69B00A57BD2 /* MsgClientLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgClientLogin.swift; sourceTree = "<group>"; };
 		7D4EC5F22171EE8200A57BD2 /* AuthScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthScheme.swift; sourceTree = "<group>"; };
 		7D4EC5F52171F44600A57BD2 /* String+Base64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Base64.swift"; path = "../../../Tinode/Source/Extension/String+Base64.swift"; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				7D7B6C22217ED20B00554A86 /* JSON+Get.swift */,
 				7D3B7B7A2187F879007B9544 /* Date+Compare.swift */,
 				7D3B7B7C21880155007B9544 /* Formatter+ISO8601.swift */,
+				7D3B7B7E21886123007B9544 /* String+Acs.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -386,6 +389,7 @@
 				7D786B152171B21B00961F9E /* ServerMessage.swift in Sources */,
 				7D7B6C23217ED20B00554A86 /* JSON+Get.swift in Sources */,
 				7D3B7B792187EF9A007B9544 /* FndTopic.swift in Sources */,
+				7D3B7B7F21886123007B9544 /* String+Acs.swift in Sources */,
 				7D7B6BFF217DAF6400554A86 /* MetaGetData.swift in Sources */,
 				7D7B6C11217DD2B200554A86 /* Acs.swift in Sources */,
 				7DBE06C1217828FF00933801 /* AcsHelper.swift in Sources */,

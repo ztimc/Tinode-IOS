@@ -9,14 +9,12 @@
 import Foundation
 
 struct Defacs : Codable {
-    var auth: AcsHelper?
-    var anon: AcsHelper?
     
-    init(auth: String, anon: String) {
-        
-    }
+    var auth: String
+    var anon: String
     
     public mutating func merge(defacs: Defacs) -> Bool {
+        /*
         var changed = 0
         if defacs.auth != nil {
             if auth == nil {
@@ -39,7 +37,10 @@ struct Defacs : Codable {
                 }
             }
         }
+ 
         
         return changed > 0
+ */
+        return false
     }
 }

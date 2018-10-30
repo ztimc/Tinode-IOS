@@ -14,8 +14,8 @@ public class MeTopic: Topic {
         super.init(tinode: tinode, name: Tinode.TOPIC_ME)
     }
     
-    override init(tinode: Tinode, name: String, desc: Description) {
-        super.init(tinode: tinode, name: name, desc: desc)
+    public init(tinode: Tinode, desc: Description) {
+        super.init(tinode: tinode, name: Tinode.TOPIC_NEW, desc: desc)
     }
 
     override public func routeMeta(meta: MsgServerMeta) {

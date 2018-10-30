@@ -13,20 +13,31 @@ public struct Description : Decodable {
     var created: Date?
     var updated: Date?
     var touched: Date?
-    var topic  : Date?
     
-    var seq:   Int = 0
-    var read:  Int = 0
-    var recv:  Int = 0
-    var clear: Int = 0
+    var seq:   Int?
+    var read:  Int?
+    var recv:  Int?
+    var clear: Int?
     
     var defacs: Defacs?
     var acs: Acs?
     var pub: JSON?
     var priv: JSON?
     
-    init() {}
-    
+    enum CodingKeys : String, CodingKey {
+        case created = "created"
+        case updated = "updated"
+        case touched = "touched"
+        case defacs  = "defacs"
+        case acs     = "acs"
+        case seq     = "seq"
+        case read    = "read"
+        case recv    = "recv"
+        case clear   = "clear"
+        case pub     = "public"
+        case priv    = "private"
+    }
+
     @discardableResult
     mutating func merge(desc: Description) -> Bool {
         var changed = 0
@@ -57,24 +68,32 @@ public struct Description : Decodable {
             }
         }
         
-        if desc.seq > seq {
-            seq = desc.seq
-            changed += 1
+        if let q1 = desc.seq, let q2 = seq {
+            if q1 > q2 {
+                seq = desc.seq
+                changed += 1
+            }
         }
         
-        if desc.read > read {
-            read = desc.read
-            changed += 1
+        if let r1 = desc.read, let r2 = read {
+            if r1 > r2 {
+                read = desc.read
+                changed += 1
+            }
         }
         
-        if desc.recv > recv {
-            recv = desc.recv
-            changed += 1
+        if let re1 = desc.recv, let re2 = recv {
+            if re1 > re2 {
+                recv = desc.recv
+                changed += 1
+            }
         }
         
-        if desc.clear > clear {
-            clear = desc.clear
-            changed += 1
+        if let c1 = desc.clear, let c2 = clear {
+            if c1 > c2 {
+                clear = desc.clear
+                changed += 1
+            }
         }
         
         if desc.pub != nil {
@@ -98,24 +117,32 @@ public struct Description : Decodable {
             changed += 1
         }
         
-        if sub.seq > seq {
-            seq = sub.seq
-            changed += 1
+        if let q1 = sub.seq, let q2 = seq {
+            if q1 > q2 {
+                seq = sub.seq
+                changed += 1
+            }
         }
         
-        if sub.read > read {
-            read = sub.read
-            changed += 1
+        if let r1 = sub.read, let r2 = read {
+            if r1 > r2 {
+                read = sub.read
+                changed += 1
+            }
         }
         
-        if sub.recv > recv {
-            recv = sub.recv
-            changed += 1
+        if let re1 = sub.recv, let re2 = recv {
+            if re1 > re2 {
+                recv = sub.recv
+                changed += 1
+            }
         }
         
-        if sub.clear > clear {
-            clear = sub.clear
-            changed += 1
+        if let c1 = sub.clear, let c2 = clear {
+            if c1 > c2 {
+                clear = sub.clear
+                changed += 1
+            }
         }
         
         if sub.pub != nil {
@@ -135,18 +162,5 @@ public struct Description : Decodable {
         return changed > 0
     }
     
-    enum CodingKeys : String, CodingKey {
-        case created = "created"
-        case updated = "updated"
-        case touched = "touched"
-        case topic   = "topic"
-        case defacs  = "defacs"
-        case acs     = "acs"
-        case seq     = "seq"
-        case read    = "read"
-        case recv    = "recv"
-        case clear   = "clear"
-        case pub     = "public"
-        case priv    = "private"
-    }
+    
 }

@@ -9,23 +9,23 @@
 import Foundation
 
 public struct Acs : Codable{
-    var given: AcsHelper?
-    var want:  AcsHelper?
-    var mode:  AcsHelper?
+    var given: String?
+    var want:  String?
+    var mode:  String?
     
     init() {
     }
     
     init(acs: Acs) {
-        given = AcsHelper(ah: acs.given)
-        want  = AcsHelper(ah: acs.want)
-        mode  = AcsHelper(ah: acs.mode)
+        given =  acs.given
+        want  =  acs.want
+        mode  =  acs.mode
     }
     
     init(am: Dictionary<String,String>) {
-        given = AcsHelper(a: am["given"]!)
-        want  = AcsHelper(a: am["want"]!)
-        mode  = AcsHelper(a: am["mode"]!)
+        given =  am["given"]!
+        want  =  am["want"]!
+        mode  =  am["mode"]!
     }
 
     public mutating func merge(am: Acs?) -> Bool {
@@ -33,22 +33,23 @@ public struct Acs : Codable{
         
         if am != nil {
             if am?.given != nil {
-                if given!.merge(ah: am?.given) {
+                if given!.merge(am?.given) {
                     changed += 1
                 }
             }
+            
             if am?.want != nil {
-                if want!.merge(ah: am?.want) {
+                if want!.merge(am?.want) {
                     changed += 1
                 }
             }
             if am?.mode != nil {
-                if mode!.merge(ah: am?.mode) {
+                if mode!.merge(am?.mode) {
                     changed += 1
                 }
             } else {
-                if let ah = AcsHelper.and(a1: want, a2: given) {
-                    if !ah.equals(ah: mode) {
+                if let ah = String.and(want, a2: given) {
+                    if ah != mode {
                         changed += 1
                         mode = ah
                     }
@@ -65,24 +66,24 @@ public struct Acs : Codable{
         
         if let am = dict {
             if let gi = am["given"] {
-                if given!.merge(ah: AcsHelper(a: gi)) {
+                if given!.merge(gi) {
                     changed += 1
                 }
             }
             
             if let wt = am["want"] {
-                if want!.merge(ah: AcsHelper(a: wt)) {
+                if want!.merge(wt) {
                     changed += 1
                 }
             }
             
             if let mo = am["mode"] {
-                if mode!.merge(ah: AcsHelper(a: mo)) {
+                if mode!.merge(mo) {
                     changed += 1
                 }
             } else {
-                if let ah = AcsHelper.and(a1: want, a2: given) {
-                    if !ah.equals(ah: mode) {
+                if let ah = String.and(want, a2: given) {
+                    if ah != mode {
                         changed += 1
                         mode = ah
                     }
@@ -99,11 +100,11 @@ public struct Acs : Codable{
         if let ace = ac {
             if ace.given != nil {
                 if given != nil {
-                    if given!.update(umode: ace.given!) {
+                    if given!.update(ace.given!) {
                         change += 1
                     }
                 } else {
-                    given = AcsHelper(a: ace.given!)
+                    given =  ace.given
                     if let _ =  given?.isDefined() {
                         change += 1
                     }
@@ -112,19 +113,19 @@ public struct Acs : Codable{
             
             if ace.want != nil {
                 if want != nil {
-                    if want!.update(umode: ace.want!) {
+                    if want!.update(ace.want!) {
                         change += 1
                     }
                 } else {
-                    want = AcsHelper(a: ace.want!)
+                    want = ace.want
                     if let _ =  want?.isDefined() {
                         change += 1
                     }
                 }
             }
             
-            if let ah = AcsHelper.and(a1: want, a2: given) {
-                if ah.equals(ah: mode) {
+            if let ah = String.and(want, a2: given) {
+                if ah != mode {
                     change += 1
                     mode = ah
                 }
@@ -140,7 +141,7 @@ public struct Acs : Codable{
             let a2m = mode,
             let a2w = want,
             let a2g = given {
-            return a1m.equals(ah: a2m) && a1w.equals(ah: a2w)  && a1g.equals(ah: a2g)
+            return a1m == a2m && a1w == a2w  && a1g == a2g
         }
         return false;
     }

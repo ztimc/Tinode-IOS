@@ -37,7 +37,7 @@ public class Topic {
     public var attached: Bool = false
     public var subsUpdated: Date?
     var lastKeyPress: Int64 = 0
-    var isOnline = false
+    var isOnline: Bool?
     var lastSeen: LastSeen?
     var maxDel: Int = 0
     
@@ -176,7 +176,7 @@ public class Topic {
     public func getSubscription(key: String) -> Subscription? {
         if subs == nil { loadSubs() }
         
-        return subs![key]
+        return subs?[key]
     }
     
     public func getMeta(query: MsgGetMeta) -> Pine<ServerMessage> {
@@ -221,10 +221,10 @@ public class Topic {
     }
     
     public func getTopicType() -> TopicType {
-        return getTopicType(name: self.name)
+        return Topic.getTopicType(name: self.name)
     }
     
-    public func getTopicType(name: String) -> TopicType {
+    public static func getTopicType(name: String) -> TopicType {
         var tp:TopicType = .any
         
         switch name {
@@ -244,17 +244,17 @@ public class Topic {
     }
     
     public func isMeType() -> Bool {
-       return getTopicType(name: name) == .me
+       return getTopicType() == .me
     }
     
     public func isP2PType() -> Bool {
-        return getTopicType(name: name) == .p2p
+        return getTopicType() == .p2p
     }
     public func isFndType() -> Bool {
-        return getTopicType(name: name) == .fnd
+        return getTopicType() == .fnd
     }
     public func isGrpType() -> Bool {
-        return getTopicType(name: name) == .grp
+        return getTopicType() == .grp
     }
     
     public func processSub(newSub: Subscription) {
@@ -342,13 +342,31 @@ public class Topic {
     public func routeMateDesc(meta: MsgServerMeta) {
         update(desc: meta.desc!)
         
-        if getTopicType(name: name) == .p2p {
+        if getTopicType() == .p2p {
             tinode.updateUser(uid: name, desc: meta.desc!)
         }
         
         onMetaDesc?(meta.desc!)
     }
     
+    public func routeInfo(info: MsgServerInfo) {
+        if info.what == Tinode.NOTE_KP {
+            if var sub = getSubscription(key: info.from!) {
+                switch info.what! {
+                case Tinode.NOTE_RAED:
+                    sub.read = info.seq!
+                    storage?.msgReadByRemote(sub: sub, read: info.seq!)
+                    break
+                case Tinode.NOTE_RECV:
+                    sub.recv = info.seq!
+                    storage?.msgRecvByRemote(sub: sub, recv: info.seq!)
+                    break
+                default:
+                    break
+                }
+            }
+        }
+    }
     
     func isPersisted() -> Bool {
         return false
