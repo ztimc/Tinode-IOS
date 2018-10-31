@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D55F9292189A22200B5E2BE /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D55F9282189A22200B5E2BE /* MessageViewController.swift */; };
+		7D55F92B2189A93600B5E2BE /* ChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D55F92A2189A93600B5E2BE /* ChatMessageView.swift */; };
 		7D56276C218448B500B173A0 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D56276B218448B500B173A0 /* SnapKit.framework */; };
 		7D56276D218448B500B173A0 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7D56276B218448B500B173A0 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7D56276F218448F000B173A0 /* ContactsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D56276E218448F000B173A0 /* ContactsController.swift */; };
@@ -43,6 +45,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7D55F9282189A22200B5E2BE /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
+		7D55F92A2189A93600B5E2BE /* ChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageView.swift; sourceTree = "<group>"; };
 		7D56276B218448B500B173A0 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		7D56276E218448F000B173A0 /* ContactsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsController.swift; sourceTree = "<group>"; };
 		7D56277221844E1500B173A0 /* IndexViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexViewController.swift; sourceTree = "<group>"; };
@@ -78,6 +82,7 @@
 		7D56277021844BCB00B173A0 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				7D55F92A2189A93600B5E2BE /* ChatMessageView.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -92,6 +97,7 @@
 				7D8D6B92216F7FC0002525F0 /* ViewController.swift */,
 				7D56277221844E1500B173A0 /* IndexViewController.swift */,
 				7D56277421844E8F00B173A0 /* ChatViewController.swift */,
+				7D55F9282189A22200B5E2BE /* MessageViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -209,7 +215,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D55F92B2189A93600B5E2BE /* ChatMessageView.swift in Sources */,
 				7DC3728221787FC8006AB6B3 /* RegisterViewController.swift in Sources */,
+				7D55F9292189A22200B5E2BE /* MessageViewController.swift in Sources */,
 				7D8D6B93216F7FC0002525F0 /* ViewController.swift in Sources */,
 				7D56277521844E8F00B173A0 /* ChatViewController.swift in Sources */,
 				7D8D6B91216F7FC0002525F0 /* AppDelegate.swift in Sources */,
