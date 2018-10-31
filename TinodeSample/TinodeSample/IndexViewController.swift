@@ -17,9 +17,12 @@ class IndexViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tinode = getTinode()
+        meTopic = MeTopic(tinode: tinode)
+        topicAttach()
+        
         let chatVC = ChatViewController()
         chatVC.tabBarItem = UITabBarItem(tabBarSystemItem: .more, tag: 0)
-        
         
         let contactsVC = ContactsController()
         contactsVC.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 1)
@@ -27,11 +30,6 @@ class IndexViewController: UITabBarController {
         let tabBarList = [chatVC, contactsVC]
         
         viewControllers = tabBarList
-        
-        tinode = getTinode()
-        meTopic = MeTopic(tinode: tinode)
-        
-        topicAttach()
     }
     
     

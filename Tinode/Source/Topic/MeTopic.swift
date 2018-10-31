@@ -38,8 +38,8 @@ public class MeTopic: Topic {
                     onMetaSub?(sub)
                 }
                 
-                onSubsUpdated?()
             }
+            onSubsUpdated?()
         }
     }
     

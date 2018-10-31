@@ -122,8 +122,6 @@ public class Topic {
         return desc?.updated
     }
     
-    
-    
     public func isNew() -> Bool {
        return name.starts(with: Tinode.TOPIC_NEW)
     }
@@ -144,6 +142,10 @@ public class Topic {
     
     public func getPriv() -> JSON?{
         return desc?.priv
+    }
+    
+    public func getPub() -> JSON? {
+        return desc?.pub
     }
     
     @discardableResult
@@ -227,17 +229,14 @@ public class Topic {
     public static func getTopicType(name: String) -> TopicType {
         var tp:TopicType = .any
         
-        switch name {
-        case Tinode.TOPIC_ME:
+        if name == Tinode.TOPIC_ME {
             tp = .me
-        case Tinode.TOPIC_FND:
+        } else if name == Tinode.TOPIC_FND {
             tp = .fnd
-        case Tinode.TOPIC_GRP_PREFIX:
+        } else if name.starts(with: Tinode.TOPIC_GRP_PREFIX) || name.starts(with: Tinode.TOPIC_NEW){
             tp = .grp
-        case Tinode.TOPIC_USR_PREFIX:
+        } else if name.starts(with: Tinode.TOPIC_USR_PREFIX) {
             tp = .p2p
-        default:
-            tp = .any
         }
         
         return tp
@@ -384,6 +383,10 @@ public enum TopicType : Int {
     case system = 0x03
     // me | fnd | grp | p2p
     case any = 0x0F
+    
+    public func compare(_ type: TopicType) -> Bool {
+        return self.rawValue & type.rawValue != 0
+    }
 }
 
 public enum NoteType {

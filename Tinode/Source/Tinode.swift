@@ -18,7 +18,7 @@ public class Tinode : NSObject, ConfigSettable {
     static let TOPIC_ME         = "me"
     static let TOPIC_FND        = "fnd"
     static let TOPIC_GRP_PREFIX = "grp"
-    static let TOPIC_USR_PREFIX = "new"
+    static let TOPIC_USR_PREFIX = "usr"
     
     static let NOTE_KP = "kp"
     static let NOTE_RAED = "read"
@@ -166,11 +166,11 @@ public class Tinode : NSObject, ConfigSettable {
         }
         
         var retTopic = Array<T>()
-        let ts = Array(topics.values) as! [T]
+        let ts = Array(topics.values)
         
         for t in ts {
-            if t.getTopicType() == .any && (date == nil || date!.before(date: t.getUpdated()!)){
-                retTopic.append(t)
+            if t.getTopicType().compare(type) && (date == nil || date!.before(date: t.getUpdated()!)){
+                retTopic.append(t as! T)
             }
         }
         
@@ -201,15 +201,19 @@ public class Tinode : NSObject, ConfigSettable {
         return topics[name]
     }
     
+    public func getMeTopic() -> MeTopic? {
+        return topics[Tinode.TOPIC_ME] as? MeTopic
+    }
+    
     public func newTopic(sub: Subscription) -> Topic{
-        /*
-        if Tinode.TOPIC_ME == name {
-            let topic:MeTopic<DP> = MeTopic(tinode: self, name: name, delegate: nil)
-            return topic
-        }*/
         
-        let topic:MeTopic = MeTopic(tinode: self)
-        return topic
+        if Tinode.TOPIC_ME == sub.topic {
+            return MeTopic(tinode: self)
+        } else if Tinode.TOPIC_FND == sub.topic {
+            return FndTopic(tinode: self)
+        }
+        
+        return ComTopic(tinode: self, sub: sub)
     }
     
     public func changeTopicName(topic: Topic, oldName: String) {

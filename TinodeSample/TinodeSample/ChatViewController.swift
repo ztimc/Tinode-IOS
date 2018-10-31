@@ -8,14 +8,51 @@
 
 import UIKit
 import SnapKit
+import Tinode
 
-class ChatViewController: UINavigationController {
-
+class ChatViewController: UINavigationController, UITableViewDelegate, UITableViewDataSource {
+    
+    var chatView: UITableView!
+    var tinode: Tinode!
+    var topics: [ComTopic] = [ComTopic]()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tinode = getTinode()
+        
+        chatView = UITableView()
+        chatView.delegate = self
+        chatView.dataSource = self
+        self.view.addSubview(chatView)
+        
+        chatView.snp.makeConstraints { (make) in
+            make.size.equalTo(self.view)
+        }
+        
+        let topic = tinode.getMeTopic()
+        topic?.onSubsUpdated = {
+            self.topics = self.tinode.getFilteredTopics(type: .user, date: nil)
+            DispatchQueue.main.async {
+                self.chatView.reloadData()
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return topics.count
+    }
+    
+    
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+        
+        cell.textLabel?.text = topics[indexPath.row].getPub()?.getStringValue(key: "fn")
+        
+        return cell
     }
 
 }
