@@ -8,13 +8,13 @@
 
 import Foundation
 
-public struct MsgServerData: Codable {
+public struct MsgServerData: Decodable {
     
-    var id: String
-    var topic: String
-    var from: String
-    var ts: String
-    var seq: Int
-    var content: Drafty
+    public var id: String?
+    public var topic: String?
+    public var from: String?
+    public var ts: String?
+    public var seq: Int?
+    public var content: JSON?
     
 }

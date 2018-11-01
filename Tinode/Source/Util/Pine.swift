@@ -26,12 +26,12 @@ public class Pine<T> {
         state = .WAITING
     }
     
-    public init(result: T) {
+    public init(_ result: T) {
         state = .RESOLVED
         self.result = result
     }
     
-    public init(err: TOError) {
+    public init(_ err: TOError) {
         state = .REJECTED
         self.err = err
     }
@@ -39,7 +39,7 @@ public class Pine<T> {
     @discardableResult public func then(result: ((T) -> Pine<T>?)?, failure: ((TOError) -> Pine<T>?)?) -> Pine<T> {
         
         if nextPine != nil {
-            return Pine<T>(err: TOError(err: "Multiple calls to thenApply are not supported", code: -1, reson: "error"))
+            return Pine<T>(TOError(err: "Multiple calls to thenApply are not supported", code: -1, reson: "error"))
         }
         
         onSuccess = result

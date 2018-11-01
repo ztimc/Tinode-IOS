@@ -9,8 +9,12 @@
 import UIKit
 import SnapKit
 
-class ChatMessageView: UIView {
+class ChatMessageView: UIView{
     
+    public var onSend: ((_ text: String?) -> ())?
+    
+    public var dataSource: UITableViewDataSource?
+    public var deletegate: UITableViewDelegate?
     
     lazy var inputField: UITextField = {
         return UITextField()
@@ -19,6 +23,8 @@ class ChatMessageView: UIView {
     lazy var sendButton: UIButton = {
         let button = UIButton()
         button.setTitle("发送", for: UIControl.State.normal)
+        button.addTarget(self, action: #selector(ChatMessageView.onSendClick(_:)), for: UIControl.Event.touchUpInside)
+        
         return button
     }()
     
@@ -33,7 +39,9 @@ class ChatMessageView: UIView {
         addSubview(inputField)
         addSubview(sendButton)
         addSubview(contentView)
-        self.setupConstraints()
+        setupConstraints()
+        contentView.delegate = deletegate
+        contentView.dataSource = dataSource
     }
     
     func setupConstraints() {
@@ -52,9 +60,17 @@ class ChatMessageView: UIView {
         }
         
         contentView.snp.makeConstraints{ make in
-            make.bottom.equalTo(inputField)
+            make.bottom.equalTo(inputField.snp.top)
             make.size.equalTo(self)
         }
+    }
+    
+    @objc func onSendClick(_ sender: UIButton) {
+        onSend?(inputField.text)
+    }
+    
+    public func onDataChange() {
+        contentView.reloadData()
     }
     
     required init?(coder aDecoder: NSCoder) {

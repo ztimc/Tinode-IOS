@@ -8,32 +8,42 @@
 
 import Foundation
 
-struct ClientMessage<Pu: Codable, Pr: Codable> : Codable{
+struct ClientMessage<Pu: Codable, Pr: Codable> : Codable {
     var hi: MsgClientHi?
     var login: MsgClientLogin?
     var acc: MsgClientAcc<Pu,Pr>?
     var sub: MsgClientSub<Pu,Pr>?
     var get: MsgClientGet?
+    var leave: MsgClientLeave?
+    var note: MsgClientNote?
     
     
-    init(hi: MsgClientHi) {
+    init(_ hi: MsgClientHi) {
         self.hi = hi
     }
     
-    init(login: MsgClientLogin) {
+    init(_ login: MsgClientLogin) {
         self.login = login
     }
     
-    init(acc: MsgClientAcc<Pu,Pr>) {
+    init(_ acc: MsgClientAcc<Pu,Pr>) {
         self.acc = acc
     }
     
-    init(sub: MsgClientSub<Pu,Pr>) {
+    init(_ sub: MsgClientSub<Pu,Pr>) {
         self.sub = sub
     }
     
-    init(get: MsgClientGet) {
+    init(_ get: MsgClientGet) {
         self.get = get
+    }
+    
+    init(_ leave: MsgClientLeave) {
+        self.leave = leave
+    }
+    
+    init(_ note: MsgClientNote) {
+        self.note = note
     }
 }
 

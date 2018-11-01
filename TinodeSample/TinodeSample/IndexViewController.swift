@@ -27,7 +27,9 @@ class IndexViewController: UITabBarController {
         let contactsVC = ContactsController()
         contactsVC.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 1)
         
-        let tabBarList = [chatVC, contactsVC]
+        let tabBarList = [chatVC, contactsVC].map { (vc) -> UIViewController in
+            return UINavigationController(rootViewController: vc)
+        }
         
         viewControllers = tabBarList
     }

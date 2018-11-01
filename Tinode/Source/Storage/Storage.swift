@@ -42,8 +42,10 @@ public protocol Storage {
     /** Get seq IDs of the stored messages as a Range */
     func getCachedMessageSSRange(topic: Topic) -> TRange
     /** Local user reported messages as read */
+    @discardableResult
     func setRead(topic: Topic, read: Int) -> Bool
     /** Local user reported messages as received */
+    @discardableResult
     func setRecv(topic: Topic,recv: Int) -> Bool
     
     /** Add subscription in a generic topic. The subscription is received from the server. */
@@ -72,7 +74,7 @@ public protocol Storage {
     /**
      * Message received from the server.
      */
-    func msgReceived(topic: Topic, sub: Subscription, msg: ServerMessage) -> Int64
+    func msgReceived(topic: Topic, sub: Subscription, msg: MsgServerData)
     
     /**
      * Save message to DB as queued or synced.

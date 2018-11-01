@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ContactsController: UINavigationController {
+class ContactsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -74,7 +74,7 @@ public class Tinode : NSObject, ConfigSettable {
             
             // Must send hi Message
             let clientHi = MsgClientHi.init(id: this.getMessageId(), lang: SystemUtils.getCurrentLanguage(), ua: this.makeUserAgent(), ver: Tinode.VERSION)
-            var clientMsg = ClientMessage<EmptyType, EmptyType>(hi: clientHi)
+            var clientMsg = ClientMessage<EmptyType, EmptyType>(clientHi)
             
              this.sendMessage(id: clientHi.id, msg: &clientMsg).then(result: { (msg) in
                 if(msg.ctrl?.code == 201){
@@ -159,6 +159,12 @@ public class Tinode : NSObject, ConfigSettable {
     }
     
     
+    /// Get Topic by `TopicType`
+    ///
+    /// - Parameters:
+    ///   - type: `TopicType`
+    ///   - date: date
+    /// - Returns: Filtered Topics
     public func getFilteredTopics<T: Topic>(type: TopicType, date: Date?) -> [T] {
         if type == .any && date == nil {
             let ts = Array(topics.values)
@@ -178,6 +184,13 @@ public class Tinode : NSObject, ConfigSettable {
     }
     
     
+    /// Subscribe topic by topicName
+    ///
+    /// - Parameters:
+    ///   - topicName: topic name
+    ///   - set: `MsgSetMeta`
+    ///   - get: `MsgGetMeta`
+    /// - Returns: server message
     public func subscribe<Pu: Codable,Pr: Codable>(topicName: String,
                                                    set: MsgSetMeta<Pu,Pr>?,
                                                    get: MsgGetMeta?) -> Pine<ServerMessage>{
@@ -185,9 +198,50 @@ public class Tinode : NSObject, ConfigSettable {
                                                             topic: topicName,
                                                             set: set,
                                                             get: get)
-        var msg: ClientMessage<Pu,Pr>   = ClientMessage<Pu,Pr>.init(sub: msgSub)
+        var msg: ClientMessage<Pu,Pr>   = ClientMessage<Pu,Pr>(msgSub)
         
         return sendMessage(id: msgSub.id, msg: &msg)
+    }
+    
+    
+    ///  Unsubscribe topic
+    ///
+    /// - Parameters:
+    ///   - topicName: name of the topic to unsubscribe to
+    ///   - unsub: true to disconnect and ubsubscribe from topic, otherwise just disconnect
+    /// - Returns: server message
+    public func leave(topicName: String, unsub: Bool) -> Pine<ServerMessage> {
+        let msgLeave = MsgClientLeave(id: getMessageId(), topic: topicName, unsub: unsub)
+        
+        var msg: ClientMessage = ClientMessage<EmptyType,EmptyType>(msgLeave)
+        return sendMessage(id: msgLeave.id, msg: &msg)
+    }
+    
+    ///  Inform all other topic subscribers of activity, such as receiving/reading a
+    ///  message or a typing notification. This method does not return a PromisedReply
+    ///  because the server does not acknowledge {note} packets.
+    ///
+    /// - Parameters:
+    ///   - topic: name of the topic inform
+    ///   - what: one or "read", "recv", "kp"
+    ///   - seq: id of the message being acknowledged
+    public func note(topic: String, what: String, seq: Int) {
+        let msgNote = MsgClientNote(topic: topic, what: what, seq: seq)
+        let msg: ClientMessage = ClientMessage<EmptyType,EmptyType>(msgNote)
+        socket?.send(message: try! msg.jsonString()!)
+    }
+    
+    
+    public func noteKeyPress(topic: String) {
+        note(topic: topic, what: Tinode.NOTE_KP, seq: 0)
+    }
+    
+    public func noteRead(topic: String, seq: Int) {
+        note(topic: topic, what: Tinode.NOTE_RAED, seq: seq)
+    }
+    
+    public func noteRecv(topic: String, seq: Int) {
+        note(topic: topic, what: Tinode.NOTE_RECV, seq: seq)
     }
     
     public func registerTopic(topic: Topic) {
@@ -197,8 +251,8 @@ public class Tinode : NSObject, ConfigSettable {
         topics[topic.name] = topic
     }
     
-    public func getTopic(name: String) -> Topic? {
-        return topics[name]
+    public func getTopic<T: Topic>(name: String) -> T? {
+        return topics[name] as? T
     }
     
     public func getMeTopic() -> MeTopic? {
@@ -229,7 +283,7 @@ public class Tinode : NSObject, ConfigSettable {
     
     public func getMeta(topicName: String, query: MsgGetMeta) -> Pine<ServerMessage> {
         let msgGet = MsgClientGet.init(id: getMessageId(), topic: topicName, query: query)
-        var msg: ClientMessage<EmptyType,EmptyType> = ClientMessage.init(get: msgGet)
+        var msg: ClientMessage<EmptyType,EmptyType> = ClientMessage(msgGet)
         
         return sendMessage(id: msg.get!.id, msg: &msg)
     }
@@ -295,7 +349,7 @@ public class Tinode : NSObject, ConfigSettable {
             }
         }
         
-        var msg = ClientMessage<EmptyType, EmptyType>(login: msgLogin)
+        var msg = ClientMessage<EmptyType, EmptyType>(msgLogin)
         
         return sendMessage(id: msg.login!.id, msg: &msg)
     }
@@ -322,10 +376,10 @@ public class Tinode : NSObject, ConfigSettable {
             }
         }
         
-        var msg = ClientMessage<Pu,Pr>.init(acc: msgAcc)
+        var msg = ClientMessage<Pu,Pr>(msgAcc)
         return sendMessage(id: msgAcc.id!, msg: &msg).then(result: { (result) -> Pine<ServerMessage>? in
             self.saveLoginInfo(msg: result.ctrl!)
-            return Pine<ServerMessage>(result: result)
+            return Pine<ServerMessage>(result)
         })
     }
     
@@ -381,6 +435,14 @@ public class Tinode : NSObject, ConfigSettable {
             if let topic = getTopic(name: msg.info!.topic!) {
                 topic.routeInfo(info: msg.info!)
             }
+        } else if msg.data != nil {
+            if let topic = getTopic(name: msg.data!.topic!) {
+                topic.routeData(data: msg.data!)
+            }
+            
+            if let id = msg.data?.id {
+                resolveWithMsg(id: id, msg: msg)
+            }
         }
         
         
@@ -391,6 +453,7 @@ public class Tinode : NSObject, ConfigSettable {
             pine.resolve(result: msg)
         }
     }
+    
     
     private func sendMessage<Pu: Codable, Pr: Codable>(id: String, msg: inout ClientMessage<Pu, Pr>) -> Pine<ServerMessage> {
         

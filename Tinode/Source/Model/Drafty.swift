@@ -12,6 +12,10 @@ public struct Drafty: Codable {
     public var txt: String?
     public var fmt: [Style]?
     public var ent: [Entity]?
+    
+    init(txt: String) {
+        self.txt = txt
+    }
 }
 
 public struct Style: Codable {

@@ -37,6 +37,13 @@ public struct Description : Decodable {
         case pub     = "public"
         case priv    = "private"
     }
+    
+    init() {
+        seq = 0
+        read = 0
+        recv = 0
+        clear = 0
+    }
 
     @discardableResult
     mutating func merge(desc: Description) -> Bool {

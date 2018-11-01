@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7D55F9292189A22200B5E2BE /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D55F9282189A22200B5E2BE /* MessageViewController.swift */; };
 		7D55F92B2189A93600B5E2BE /* ChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D55F92A2189A93600B5E2BE /* ChatMessageView.swift */; };
+		7D55F949218AB33E00B5E2BE /* IQKeyboardManagerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D55F948218AB33E00B5E2BE /* IQKeyboardManagerSwift.framework */; };
+		7D55F94A218AB33E00B5E2BE /* IQKeyboardManagerSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7D55F948218AB33E00B5E2BE /* IQKeyboardManagerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7D56276C218448B500B173A0 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D56276B218448B500B173A0 /* SnapKit.framework */; };
 		7D56276D218448B500B173A0 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7D56276B218448B500B173A0 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7D56276F218448F000B173A0 /* ContactsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D56276E218448F000B173A0 /* ContactsController.swift */; };
@@ -37,6 +39,7 @@
 			files = (
 				7D56276D218448B500B173A0 /* SnapKit.framework in Embed Frameworks */,
 				7D8D6BA5216F8018002525F0 /* Tinode.framework in Embed Frameworks */,
+				7D55F94A218AB33E00B5E2BE /* IQKeyboardManagerSwift.framework in Embed Frameworks */,
 				7D8D6BAC216F818C002525F0 /* Starscream.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -47,6 +50,7 @@
 /* Begin PBXFileReference section */
 		7D55F9282189A22200B5E2BE /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		7D55F92A2189A93600B5E2BE /* ChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageView.swift; sourceTree = "<group>"; };
+		7D55F948218AB33E00B5E2BE /* IQKeyboardManagerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IQKeyboardManagerSwift.framework; path = Carthage/Build/iOS/IQKeyboardManagerSwift.framework; sourceTree = "<group>"; };
 		7D56276B218448B500B173A0 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		7D56276E218448F000B173A0 /* ContactsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsController.swift; sourceTree = "<group>"; };
 		7D56277221844E1500B173A0 /* IndexViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexViewController.swift; sourceTree = "<group>"; };
@@ -72,6 +76,7 @@
 			files = (
 				7D56276C218448B500B173A0 /* SnapKit.framework in Frameworks */,
 				7D8D6BA4216F8018002525F0 /* Tinode.framework in Frameworks */,
+				7D55F949218AB33E00B5E2BE /* IQKeyboardManagerSwift.framework in Frameworks */,
 				7D8D6BAB216F818C002525F0 /* Starscream.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,6 +110,7 @@
 		7D8D6B84216F7FC0002525F0 = {
 			isa = PBXGroup;
 			children = (
+				7D55F948218AB33E00B5E2BE /* IQKeyboardManagerSwift.framework */,
 				7D56276B218448B500B173A0 /* SnapKit.framework */,
 				7D8D6BAA216F818C002525F0 /* Starscream.framework */,
 				7D8D6BA3216F8018002525F0 /* Tinode.framework */,

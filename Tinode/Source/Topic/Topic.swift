@@ -26,16 +26,17 @@ public class Topic {
     public var onContUpdate: ((_ sub: Subscription) -> ())?
     
     
-    var tinode:  Tinode
-    var name:    String
-    var storage: Storage?
-    
-    var desc:        Description?
-    var subs:        Dictionary<String, Subscription>?
-    var tags:        [String]?
-    
     public var attached: Bool = false
     public var subsUpdated: Date?
+    public var name:    String
+    
+    var tinode:  Tinode
+    var storage: Storage?
+    
+    var desc: Description!
+    var subs: Dictionary<String, Subscription>?
+    var tags: [String]?
+    
     var lastKeyPress: Int64 = 0
     var isOnline: Bool?
     var lastSeen: LastSeen?
@@ -47,7 +48,7 @@ public class Topic {
         self.isOnline = sub.online
         self.desc     = Description()
         
-        self.desc?.merge(sub: sub)
+        self.desc.merge(sub: sub)
     }
     
     init(tinode: Tinode, name: String, desc: Description) {
@@ -55,7 +56,7 @@ public class Topic {
         self.name   = name
         self.desc   = Description()
         
-        self.desc?.merge(desc: desc)
+        self.desc.merge(desc: desc)
     }
     
     init(tinode: Tinode, name: String) {
@@ -70,7 +71,7 @@ public class Topic {
     
     public func subscribe<Pu: Codable, Pr: Codable>(set: MsgSetMeta<Pu, Pr>?, get: MsgGetMeta?) -> Pine<ServerMessage>{
         if attached || !tinode.isConnect() {
-            return Pine(err: TOError(err: "attached", code: -1, reson: "not need call"))
+            return Pine(TOError(err: "attached", code: -1, reson: "not need call"))
         }
         
         var newTopic: Bool
@@ -90,7 +91,7 @@ public class Topic {
                 if !this.attached {
                     this.attached = true
                     if let acsDict = msg.ctrl?.params?.getDictionary(key: "acs") {
-                        this.desc?.acs = Acs(am: acsDict)
+                        this.desc.acs = Acs(am: acsDict)
                         if this.isNew() {
                             this.setUpdated(updated: msg.ctrl?.ts)
                             this.name = (msg.ctrl?.topic)!
@@ -100,7 +101,7 @@ public class Topic {
                         this.onSubscribe?((msg.ctrl?.code)!, (msg.ctrl?.text)!)
                     }
                 }
-                return Pine(result: msg)
+                return Pine(msg)
             }, failure: { [weak self] (err) -> Pine<ServerMessage>? in
                 guard let this = self else { return nil}
                 if let code = err.code {
@@ -110,16 +111,16 @@ public class Topic {
                         this.setStorage(store: nil)
                     }
                 }
-                return Pine(err: err)
+                return Pine(err)
             })
     }
     
     public func setUpdated(updated: Date?) {
-        desc?.updated = updated
+        desc.updated = updated
     }
     
     public func getUpdated() -> Date? {
-        return desc?.updated
+        return desc.updated
     }
     
     public func isNew() -> Bool {
@@ -141,11 +142,11 @@ public class Topic {
     }
     
     public func getPriv() -> JSON?{
-        return desc?.priv
+        return desc.priv
     }
     
     public func getPub() -> JSON? {
-        return desc?.pub
+        return desc.pub
     }
     
     @discardableResult
@@ -175,39 +176,52 @@ public class Topic {
         subs?.removeValue(forKey: sub.user!)
     }
     
-    public func getSubscription(key: String) -> Subscription? {
+    public func getSubscription(_ key: String) -> Subscription? {
         if subs == nil { loadSubs() }
         
         return subs?[key]
     }
     
-    public func getMeta(query: MsgGetMeta) -> Pine<ServerMessage> {
+    public func getMeta(_ query: MsgGetMeta) -> Pine<ServerMessage> {
         return tinode.getMeta(topicName: name, query: query)
     }
     
     public func updateAccessMode(ac: AccessChange) ->Bool {
-        if desc?.acs == nil {
-            desc?.acs = Acs()
+        if desc.acs == nil {
+            desc.acs = Acs()
         }
-        return desc?.acs?.update(ac: ac) ?? false
+        return desc.acs?.update(ac: ac) ?? false
     }
     
     public func update(desc: Description) {
-        if (self.desc!.merge(desc: desc)) {
+        if (self.desc.merge(desc: desc)) {
             storage?.topicUpdate(topic: self)
         }
     }
     
     public func update(sub: Subscription) {
-        if (self.desc!.merge(sub: sub)) {
+        if (self.desc.merge(sub: sub)) {
             storage?.topicUpdate(topic: self)
         }
         
         isOnline = sub.online
     }
     
-    public func leave() {
-        // TODO: 需要填写
+    @discardableResult public func leave(_ unsub: Bool) -> Pine<ServerMessage> {
+        if attached {
+            return tinode.leave(topicName: name, unsub: unsub).then(result: { (msg) -> Pine<ServerMessage>? in
+                if unsub {
+                    self.tinode.unregisterTopic(topicName: self.name)
+                }
+                return Pine(msg)
+            })
+        }
+        return Pine(TOError(err: "not attach ", code: -1, reson: "you mut attach topic"))
+    }
+    
+    
+    @discardableResult public func leave() -> Pine<ServerMessage> {
+        return leave(false)
     }
     
     public func routeMetaDel(clear: Int?, delseq: [MsgDelRange]?) {
@@ -256,6 +270,10 @@ public class Topic {
         return getTopicType() == .grp
     }
     
+    public func getMetaGetBuilder() -> MetaGetBuilder {
+        return MetaGetBuilder.init(topic: self)
+    }
+    
     public func processSub(newSub: Subscription) {
         var sub: Subscription?
         
@@ -264,7 +282,7 @@ public class Topic {
             removeSubFromCache(sub: newSub)
             sub = newSub
         } else {
-            sub = getSubscription(key: newSub.user!)
+            sub = getSubscription(newSub.user!)
             if sub != nil {
                 sub!.merge(sub: newSub)
                 storage?.subUpdate(topic: self, sub: newSub )
@@ -280,28 +298,24 @@ public class Topic {
         onMetaSub?(sub!)
     }
     
-    public func getMetaGetBuilder() -> MetaGetBuilder {
-        return MetaGetBuilder.init(topic: self)
-    }
-    
     public func routePres(pres: MsgServerPres) {
         var sub: Subscription?
         switch pres.what {
         case What.on.rawValue,
              What.off.rawValue:
-            sub = getSubscription(key: pres.src!)
+            sub = getSubscription(pres.src!)
             sub?.online = What.on.rawValue == pres.what
             break
         case What.del.rawValue:
             routeMetaDel(clear: pres.clear, delseq: pres.delseq)
             break
         case What.acs.rawValue:
-            sub = getSubscription(key: pres.src!)
+            sub = getSubscription(pres.src!)
             if sub != nil {
                 var acs = Acs()
                 acs.update(ac: pres.dacs)
                 if acs.isModeDefined() {
-                     getMeta(query: getMetaGetBuilder().withGetSub(user: pres.src!).build()).then()
+                     getMeta(getMetaGetBuilder().withGetSub(user: pres.src!).build()).then()
                 }
             } else {
                 sub?.updateAccessMode(ac: pres.dacs!)
@@ -339,18 +353,18 @@ public class Topic {
     }
     
     public func routeMateDesc(meta: MsgServerMeta) {
-        update(desc: meta.desc!)
         
+        update(desc: meta.desc!)
         if getTopicType() == .p2p {
             tinode.updateUser(uid: name, desc: meta.desc!)
         }
         
-        onMetaDesc?(meta.desc!)
+        self.onMetaDesc?(meta.desc!)
     }
     
     public func routeInfo(info: MsgServerInfo) {
         if info.what == Tinode.NOTE_KP {
-            if var sub = getSubscription(key: info.from!) {
+            if var sub = getSubscription(info.from!) {
                 switch info.what! {
                 case Tinode.NOTE_RAED:
                     sub.read = info.seq!
@@ -365,6 +379,64 @@ public class Topic {
                 }
             }
         }
+    }
+    
+    public func routeData(data: MsgServerData) {
+        storage?.msgReceived(topic: self, sub: getSubscription(data.from!)!, msg: data)
+        noteRecv()
+        
+        setSeq(seq: data.seq!)
+        
+        onData?(data)
+    }
+    
+    public func setSeq(seq: Int) {
+        desc.seq = seq
+    }
+    
+    public func getSeq() -> Int {
+        if let seq = desc.seq {
+            return seq
+        }
+        return 0
+    }
+    
+    func noteReadRecv(what: NoteType) -> Int {
+        var result = 0
+        
+        switch what {
+        case .read:
+            if desc.read! < desc.seq! {
+                tinode.noteRead(topic: name, seq: desc.seq!)
+                desc.read = desc.seq
+                result = desc.read!
+            }
+        case .recv:
+            if desc.recv! < desc.seq! {
+                tinode.noteRecv(topic: name, seq: desc.seq!)
+                desc.recv = desc.seq
+                result = desc.recv!
+            }
+        }
+        return result
+    }
+    
+    @discardableResult
+    func noteRead() -> Int {
+        let result = noteReadRecv(what: .read)
+        storage?.setRead(topic: self, read: result)
+        return result
+    }
+    
+    @discardableResult
+    func noteRecv() -> Int {
+        let result = noteReadRecv(what: .recv)
+        storage?.setRecv(topic: self, recv: result)
+        return result
+    }
+    
+    func noteKeyPress() {
+        tinode.noteKeyPress(topic: name)
     }
     
     func isPersisted() -> Bool {

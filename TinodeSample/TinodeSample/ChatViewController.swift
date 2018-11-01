@@ -47,6 +47,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         let messageController = MessageViewController()
+        messageController.hidesBottomBarWhenPushed = true
+        messageController.topicName = topics[indexPath.row].name
         self.navigationController?.pushViewController(messageController, animated: true)
     }
     
