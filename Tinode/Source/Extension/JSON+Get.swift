@@ -27,6 +27,22 @@ extension JSON {
         return nil
     }
     
+    public func getIntValue(key: String) -> Int?{
+        switch self {
+        case .dictionary(let dict):
+            switch dict[key] {
+            case .int(let val)?:
+                return val
+            default:
+                break;
+            }
+            break
+        default:
+            break;
+        }
+        return nil
+    }
+    
     public func getArrayStringValue(key: String) -> [String] {
         var arr: [String] = [String]()
         switch self {

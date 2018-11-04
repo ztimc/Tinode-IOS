@@ -18,4 +18,9 @@ public class TOError: Error {
         self.code = code
         self.reson = reson
     }
+    
+    init(err: String?) {
+        self.err = err
+    }
+    
 }

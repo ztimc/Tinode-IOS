@@ -10,6 +10,10 @@ import Foundation
 
 extension Date {
     func before(date: Date) -> Bool {
-       return date.compare(date) == .orderedAscending
+       return self.compare(date) == .orderedAscending
+    }
+    
+    func after(date: Date) -> Bool {
+        return self.compare(date) == .orderedDescending
     }
 }

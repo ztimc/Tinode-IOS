@@ -84,7 +84,7 @@ public protocol Storage {
      * @return database ID of the message suitable for use in
      *  {@link #msgDelivered(Topic topic, long id, Date timestamp, int seq)}
      */
-    func msgSend(topic: Topic, data: Drafty)
+    func msgSend(topic: Topic, data: Content) -> Int64
     
     /**
      * Save message to database as a SDRaft. SDRaft will not be sent to server until it status changes.
@@ -94,7 +94,7 @@ public protocol Storage {
      * @return database ID of the message suitable for use in
      *  {@link #msgDelivered(Topic topic, long id, Date timestamp, int seq)}
      */
-    func msgSDRaft(topic: Topic, data: Drafty)
+    func msgSDRaft(topic: Topic, data: Content)
     
     /**
      * Update message SDRaft content without
@@ -104,7 +104,7 @@ public protocol Storage {
      * @param data updated content of the message. Must not be null.
      * @return true on success, false otherwise
      */
-    func msgSDRaftUpdate(topic: Topic, dbMessageId: UInt64, data: Drafty) -> Bool
+    func msgSDRaftUpdate(topic: Topic, dbMessageId: UInt64, data: Content) -> Bool
     
     /**
      * Message is ready to be sent to the server.
@@ -114,7 +114,7 @@ public protocol Storage {
      * @param data updated content of the message. If null only status is updated.
      * @return true on success, false otherwise
      */
-    func msgReady(topic: Topic, dbMessageId:Int64, data: Drafty) -> Bool
+    func msgReady(topic: Topic, dbMessageId:Int64, data: Content) -> Bool
     
     /**
      * Delete message by database id.

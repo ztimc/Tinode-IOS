@@ -11,7 +11,7 @@ import Foundation
 public struct MsgServerMeta : Decodable {
     public var id: String?
     public var topic: String?
-    public var ts: String?
+    public var ts: Date?
     public var desc: Description?
     public var sub: [Subscription]?
     public var tags: [String]?

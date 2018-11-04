@@ -8,10 +8,16 @@
 
 import Foundation
 
-public enum JSON: Decodable {
+public enum JSON: Codable {
+    
+    public func encode(to encoder: Encoder) throws {
+        
+    }
+    
     case bool(Bool)
     case double(Double)
     case string(String)
+    case int(Int)
     indirect case array([JSON])
     indirect case dictionary([String: JSON])
     
@@ -35,6 +41,8 @@ public enum JSON: Decodable {
                 dict[key.stringValue] = .double(value)
             } else if let value = try? container.decode(String.self, forKey: key) {
                 dict[key.stringValue] = .string(value)
+            } else if let value = try? container.decode(Int.self, forKey: key) {
+                 dict[key.stringValue] = .int(value)
             } else if let value = try? container.nestedContainer(keyedBy: JSONCodingKeys.self, forKey: key) {
                 dict[key.stringValue] = JSON(from: value)
             } else if let value = try? container.nestedUnkeyedContainer(forKey: key) {
@@ -54,6 +62,8 @@ public enum JSON: Decodable {
                 arr.append(.double(value))
             } else if let value = try? container.decode(String.self) {
                 arr.append(.string(value))
+            } else if let value = try? container.decode(Int.self) {
+                arr.append(.int(value))
             } else if let value = try? container.nestedContainer(keyedBy: JSONCodingKeys.self) {
                 arr.append(JSON(from: value))
             } else if let value = try? container.nestedUnkeyedContainer() {

@@ -217,6 +217,19 @@ public class Tinode : NSObject, ConfigSettable {
         return sendMessage(id: msgLeave.id, msg: &msg)
     }
     
+    
+    /// request to publish data.
+    ///
+    /// - Parameters:
+    ///   - topicName: name of the topic to publish to
+    ///   - conten: payload to publish to topic
+    /// - Returns: return ctrl message
+    public func publish(topicName: String, conten: Content) -> Pine<ServerMessage> {
+        let msgPub = MsgClientPub(id: getMessageId(), topic: topicName, noecho: true, content: conten)
+        var msg: ClientMessage = ClientMessage<EmptyType,EmptyType>(msgPub)
+        return sendMessage(id: msgPub.id, msg: &msg)
+    }
+    
     ///  Inform all other topic subscribers of activity, such as receiving/reading a
     ///  message or a typing notification. This method does not return a PromisedReply
     ///  because the server does not acknowledge {note} packets.

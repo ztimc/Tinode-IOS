@@ -40,9 +40,9 @@ class IndexViewController: UITabBarController {
             .withGetDesc()
             .withGetSub()
             .build()
-        let setMate = MsgSetMeta<VCard,String>()
+        let setMeta = MsgSetMeta<VCard,String>()
         
-        meTopic!.subscribe(set: setMate,
+        meTopic!.subscribe(set: setMeta,
                            get: getMeta)
             .then(result: { (msg) -> Pine<ServerMessage>? in
                 print(msg)

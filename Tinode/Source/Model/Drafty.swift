@@ -16,6 +16,12 @@ public struct Drafty: Codable {
     init(txt: String) {
         self.txt = txt
     }
+    
+    init(tex: String, fmt: [Style], ent: [Entity]) {
+        self.txt = tex
+        self.fmt = fmt
+        self.ent = ent
+    }
 }
 
 public struct Style: Codable {
@@ -24,10 +30,10 @@ public struct Style: Codable {
     public var len: Int?
     public var tp: String?
     public var key: Int?
-    public var data: Dictionary<String,String>?
+    public var data: JSON?
 }
 
 public struct Entity: Codable {
     public var tp: String?
-    public var data: Dictionary<String,String>?
+    public var data: JSON?
 }

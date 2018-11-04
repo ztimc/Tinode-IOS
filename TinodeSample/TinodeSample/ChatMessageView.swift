@@ -13,9 +13,6 @@ class ChatMessageView: UIView{
     
     public var onSend: ((_ text: String?) -> ())?
     
-    public var dataSource: UITableViewDataSource?
-    public var deletegate: UITableViewDelegate?
-    
     lazy var inputField: UITextField = {
         return UITextField()
     }()
@@ -24,7 +21,6 @@ class ChatMessageView: UIView{
         let button = UIButton()
         button.setTitle("发送", for: UIControl.State.normal)
         button.addTarget(self, action: #selector(ChatMessageView.onSendClick(_:)), for: UIControl.Event.touchUpInside)
-        
         return button
     }()
     
@@ -33,14 +29,14 @@ class ChatMessageView: UIView{
         return tableView
     }()
     
-    override init(frame: CGRect) {
+    public init(frame: CGRect, deletege: UITableViewDelegate, dataSource: UITableViewDataSource) {
         super.init(frame: frame)
         
         addSubview(inputField)
         addSubview(sendButton)
         addSubview(contentView)
         setupConstraints()
-        contentView.delegate = deletegate
+        contentView.delegate = deletege
         contentView.dataSource = dataSource
     }
     

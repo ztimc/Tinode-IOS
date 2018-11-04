@@ -19,6 +19,7 @@
 		7D4EC5FF2173644200A57BD2 /* Credential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4EC5FE2173644200A57BD2 /* Credential.swift */; };
 		7D55F94C218ADE8F00B5E2BE /* MsgClientLeave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D55F94B218ADE8F00B5E2BE /* MsgClientLeave.swift */; };
 		7D55F94E218B05AD00B5E2BE /* MsgClientNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D55F94D218B05AD00B5E2BE /* MsgClientNote.swift */; };
+		7D55F950218C000500B5E2BE /* MsgClientPub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D55F94F218C000500B5E2BE /* MsgClientPub.swift */; };
 		7D5627772184872000B173A0 /* ComTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5627762184872000B173A0 /* ComTopic.swift */; };
 		7D5627792186B1DF00B173A0 /* MsgServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5627782186B1DF00B173A0 /* MsgServerInfo.swift */; };
 		7D7756F92170565400D68F75 /* ClientMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7756F82170565400D68F75 /* ClientMessage.swift */; };
@@ -80,6 +81,7 @@
 		7D4EC5FE2173644200A57BD2 /* Credential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Credential.swift; path = ../../../Tinode/Source/Model/Credential.swift; sourceTree = "<group>"; };
 		7D55F94B218ADE8F00B5E2BE /* MsgClientLeave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MsgClientLeave.swift; path = ../../../Tinode/Source/Model/MsgClientLeave.swift; sourceTree = "<group>"; };
 		7D55F94D218B05AD00B5E2BE /* MsgClientNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MsgClientNote.swift; path = ../../../Tinode/Source/Model/MsgClientNote.swift; sourceTree = "<group>"; };
+		7D55F94F218C000500B5E2BE /* MsgClientPub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MsgClientPub.swift; path = ../../../Tinode/Source/Model/MsgClientPub.swift; sourceTree = "<group>"; };
 		7D5627762184872000B173A0 /* ComTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ComTopic.swift; path = ../../../Tinode/Source/Topic/ComTopic.swift; sourceTree = "<group>"; };
 		7D5627782186B1DF00B173A0 /* MsgServerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MsgServerInfo.swift; path = ../../../Tinode/Source/Model/MsgServerInfo.swift; sourceTree = "<group>"; };
 		7D7756F82170565400D68F75 /* ClientMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClientMessage.swift; path = ../../../Tinode/Source/Model/ClientMessage.swift; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 				7D7B6C08217DBA1000554A86 /* Subscription.swift */,
 				7D7B6C0A217DBAAF00554A86 /* User.swift */,
 				7DBE06C221783A3100933801 /* Vcard.swift */,
+				7D55F94F218C000500B5E2BE /* MsgClientPub.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -434,6 +437,7 @@
 				7D3B7B7B2187F879007B9544 /* Date+Compare.swift in Sources */,
 				7DBE06BB217737AA00933801 /* MsgClientAcc.swift in Sources */,
 				7D786B172171BAB700961F9E /* Ctrl.swift in Sources */,
+				7D55F950218C000500B5E2BE /* MsgClientPub.swift in Sources */,
 				7D7B6BF7217DAAD100554A86 /* MetaSetSub.swift in Sources */,
 				7D55F94C218ADE8F00B5E2BE /* MsgClientLeave.swift in Sources */,
 				7D4EC5FA2173136200A57BD2 /* Pine.swift in Sources */,

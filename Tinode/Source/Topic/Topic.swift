@@ -69,6 +69,22 @@ public class Topic {
         self.init(tinode: tinode, name: Tinode.TOPIC_NEW)
     }
     
+    public func subscribe() -> Pine<ServerMessage> {
+        let getMeta = getMetaGetBuilder()
+            .withGetDesc()
+            .withGetSub()
+            .withGetData()
+            .withGetTags()
+            .build()
+        var setMeta = MsgSetMeta<JSON,JSON>()
+        
+        if isNew() && desc.pub != nil || desc.priv != nil {
+            setMeta.desc = MetaSetDesc(p: desc.pub, r: desc.pub)
+        }
+        
+        return subscribe(set: setMeta, get: getMeta)
+    }
+    
     public func subscribe<Pu: Codable, Pr: Codable>(set: MsgSetMeta<Pu, Pr>?, get: MsgGetMeta?) -> Pine<ServerMessage>{
         if attached || !tinode.isConnect() {
             return Pine(TOError(err: "attached", code: -1, reson: "not need call"))
@@ -149,6 +165,26 @@ public class Topic {
         return desc.pub
     }
     
+    public func setRecv(_ recv: Int) {
+        if recv > desc.recv! {
+            desc.recv = recv
+        }
+    }
+    
+    public func getRevc() -> Int {
+        return desc.recv!
+    }
+    
+    public func setRead(_ read: Int) {
+        if read > desc.read! {
+            desc.read = read
+        }
+    }
+    
+    public func getRead() -> Int {
+        return desc.read!
+    }
+    
     @discardableResult
     public func loadSubs() -> Int {
         guard let ss = storage?.getSubscriptions(topic: self) else {
@@ -207,11 +243,19 @@ public class Topic {
         isOnline = sub.online
     }
     
+    public func update(tags: [String]) {
+        self.tags = tags
+        storage?.topicUpdate(topic: self)
+    }
+    
     @discardableResult public func leave(_ unsub: Bool) -> Pine<ServerMessage> {
         if attached {
-            return tinode.leave(topicName: name, unsub: unsub).then(result: { (msg) -> Pine<ServerMessage>? in
+            return tinode.leave(topicName: name, unsub: unsub).then(result: { [weak self] (msg) -> Pine<ServerMessage>? in
+                guard let this = self else { return  Pine(TOError(err: "self is free", code: -1, reson: "error"))}
+                
+                this.topticLeft(unsub: unsub, code: msg.ctrl!.code, reason: msg.ctrl!.text)
                 if unsub {
-                    self.tinode.unregisterTopic(topicName: self.name)
+                    this.tinode.unregisterTopic(topicName: this.name)
                 }
                 return Pine(msg)
             })
@@ -219,9 +263,40 @@ public class Topic {
         return Pine(TOError(err: "not attach ", code: -1, reson: "you mut attach topic"))
     }
     
-    
     @discardableResult public func leave() -> Pine<ServerMessage> {
         return leave(false)
+    }
+
+    fileprivate func publish(content: Content, id: Int64) -> Pine<ServerMessage> {
+        return tinode.publish(topicName: name, conten: content).then(result: {[weak self] (msg) -> Pine<ServerMessage>? in
+            guard let this = self else { return Pine(TOError(err: "self is err")) }
+            this.processDelivery(ctrl: msg.ctrl!, id: id)
+            return Pine(msg)
+        }, failure: { (err) -> Pine<ServerMessage>? in
+            return Pine(err)
+        })
+    }
+    
+    public func publish(_ content: Content) -> Pine<ServerMessage> {
+        var id:Int64 = -1
+        if let sId = storage?.msgSend(topic: self, data: content) {
+            id = sId
+        }
+        
+        if attached {
+            return publish(content: content, id: id)
+        } else {
+            return subscribe().then(result: {[weak self] (msg) -> Pine<ServerMessage>? in
+                guard let this = self else {return Pine(TOError(err: "self is nil "))}
+                return this.publish(content: content, id: id)
+                }, failure: { (err) -> Pine<ServerMessage>? in
+                    return Pine(err)
+            })
+        }
+    }
+    
+    public func publish(_ content: String) -> Pine<ServerMessage> {
+        return publish(Content.string(content))
     }
     
     public func routeMetaDel(clear: Int?, delseq: [MsgDelRange]?) {
@@ -348,8 +423,22 @@ public class Topic {
         }
         
         if meta.sub != nil {
-            
+            if subsUpdated == nil || meta.ts!.after(date: subsUpdated!) {
+                subsUpdated = meta.ts
+            }
+            routeMetaSub(meta: meta)
         }
+        
+        if meta.del != nil {
+            routeMetaDel(clear: meta.del!.clear!, delseq: meta.del!.delseq!)
+        }
+        
+        if meta.tags != nil {
+            routeMetaTgas(tags: meta.tags!)
+        }
+        
+        onMeta?(meta)
+        
     }
     
     public func routeMateDesc(meta: MsgServerMeta) {
@@ -390,6 +479,40 @@ public class Topic {
         onData?(data)
     }
     
+    func routeMetaSub(meta: MsgServerMeta) {
+        if let subs = meta.sub {
+            for sub in subs {
+                processSub(newSub: sub)
+            }
+        }
+        
+        onSubsUpdated?()
+    }
+    
+    func routeMetaDel(clear: Int, delseq: [MsgDelRange]) {
+        if let store = storage {
+            for rage in delseq {
+                let toId: Int
+                if rage.hi != nil {
+                    toId = rage.hi!
+                } else {
+                    toId = rage.low! + 1
+                }
+                store.msgDelete(topic: self, delId: clear, fromId: rage.low!, toId: toId)
+            }
+        }
+        
+        setMaxDel(max: clear)
+        
+        onData?(nil)
+    }
+    
+    func routeMetaTgas(tags: [String]) {
+        update(tags: tags)
+        
+        onMetaTags?(tags)
+    }
+    
     public func setSeq(seq: Int) {
         desc.seq = seq
     }
@@ -399,6 +522,20 @@ public class Topic {
             return seq
         }
         return 0
+    }
+    
+    private func processDelivery(ctrl: MsgServerCtrl, id: Int64) {
+        if let seq = ctrl.params?.getIntValue(key: "seq") {
+            setSeq(seq: seq)
+        }
+        if id > 0 && storage != nil {
+            if storage!.msgDelivered(topic: self, dbMessageId: id, timestamp: ctrl.ts, seq: desc.seq!) {
+                setRecv(desc.seq!)
+            }
+        } else {
+             setRecv(desc.seq!)
+        }
+        storage?.setRead(topic: self, read: desc.seq!)
     }
     
     func noteReadRecv(what: NoteType) -> Int {
@@ -437,6 +574,14 @@ public class Topic {
     
     func noteKeyPress() {
         tinode.noteKeyPress(topic: name)
+    }
+    
+    func topticLeft(unsub: Bool, code: Int, reason: String) {
+        if attached {
+            attached = false
+            
+            onLeave?(unsub, code, reason)
+        }
     }
     
     func isPersisted() -> Bool {

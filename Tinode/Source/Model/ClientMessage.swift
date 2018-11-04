@@ -15,6 +15,7 @@ struct ClientMessage<Pu: Codable, Pr: Codable> : Codable {
     var sub: MsgClientSub<Pu,Pr>?
     var get: MsgClientGet?
     var leave: MsgClientLeave?
+    var pub: MsgClientPub?
     var note: MsgClientNote?
     
     
@@ -40,6 +41,10 @@ struct ClientMessage<Pu: Codable, Pr: Codable> : Codable {
     
     init(_ leave: MsgClientLeave) {
         self.leave = leave
+    }
+    
+    init(_ pub: MsgClientPub) {
+        self.pub = pub
     }
     
     init(_ note: MsgClientNote) {

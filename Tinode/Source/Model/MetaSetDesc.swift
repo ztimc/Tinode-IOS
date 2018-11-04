@@ -13,7 +13,7 @@ public struct MetaSetDesc<P: Codable,R: Codable> : Codable {
     var pub: P?
     var priv: R?
     
-    public init(p: P, r: R) {
+    public init(p: P?, r: R?) {
         self.pub = p
         self.priv = r
     }
